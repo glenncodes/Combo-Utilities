@@ -72,7 +72,7 @@ if not os.path.isfile("config.json"):
 
 
 def savelocation(mode):
-    location = config.get('General', 'file save location')
+    location = json.loads(open("config.json").read())["SaveLocation"]
         
     if location == "Original":
         return open(os.getcwd() + "/lastlocation.txt").readline()
