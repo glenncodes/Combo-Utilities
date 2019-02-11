@@ -24,7 +24,6 @@
 ;     - Allowed Options:
 ;        - Default                      | This will use the default saving location which is "Keepin' It Clean\{module}"
 ;        - Path to where you wanna save | This will be where everything is saved. Example: C:\Users\{username}\Desktop\Combo Utilities Output
-;        - Original [WIP!]              | This will save the file to the folder it initally came from. Example: If you open a text file from your desktop, the cleaned file will be on your desktop.
 ;     - Recommended Option:
 ;        - Default.
 ;

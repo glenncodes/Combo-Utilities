@@ -1,4 +1,3 @@
-import configparser
 import ctypes
 import datetime
 import fileinput
@@ -46,15 +45,9 @@ try:
 except ModuleNotFoundError:
     print("Tqdm not found, Installing..")
     exit(install_modules("tqdm"))
-try:
-    from psutil import virtual_memory
-except ModuleNotFoundError:
-    print("Psutil not found, Installing..")
-    exit(install_modules("psutil"))
 
 to_write = []
 invalid_lines = []
-mem = virtual_memory()
 width = shutil.get_terminal_size().columns
 PYTHONDONTWRITEBYTECODE = 1
 
@@ -174,45 +167,8 @@ def lines_checker(text):
 def openfile():
     root = Tk()
     root.withdraw()
-    if config.get("General", "file save location") == "Original":
-        try:
-            with open(os.getcwd() + "/lastlocation.txt", 'r') as file:
-                root.filename = filedialog.askopenfilename(initialdir=file.readlines(), title="Select combo file", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
-        except FileNotFoundError:
-            user = os.path.expanduser("~")
-            reg = re.search(r"C:\\Users\\(.*)", user)
-            with open(os.getcwd() + "/lastlocation.txt", 'w') as file:
-                file.write(f"C:/Users/{reg.group(1)}/Desktop/")
-    else:
-        root.filename = filedialog.askopenfilename(initialdir=os.path.expanduser("~/Desktop"), title="Select combo file", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
+    root.filename = filedialog.askopenfilename(initialdir=os.path.expanduser("~/Desktop"), title="Select combo file", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
 
-    if os.path.getsize(root.filename) > mem.total:
-        print(Fore.YELLOW + "Choosing 'Yes' will cause issues and most likely make the program crash.".center(width))
-        yn = input(Fore.YELLOW + "The file you are trying to load is bigger than the amount of ram you have, would you like to continue? [Yes/No]".center(width).split("]")[0] + "] " + Fore.LIGHTWHITE_EX).lower()
-        if yn == "yes":
-            return root.filename
-        else:
-            print(Fore.YELLOW + "Cancelling..".center(width))
-            yn2 = input(Fore.YELLOW + "Would you like to select a different file? [Yes/No]".split("]")[0] + "] ".center(width) + Fore.LIGHTWHITE_EX).lower()
-            if yn2 == "yes":
-                openfile()
-                return root.filename
-            else:
-                exit("Exiting..")
-    else:
-        if config.get('General', 'file save location') == "Original":
-            try:
-                with open(os.getcwd() + "/lastlocation.txt", 'w') as tempfile:
-                    match = re.match(r"(.*\/.*).txt", str(root.filename))
-                    tempfile.writelines(match.group(1))
-            except FileNotFoundError:
-                user = os.path.expanduser("~")
-                reg = re.search(r"C:\\Users\\(.*)", user)
-                with open(os.getcwd() + "/lastlocation.txt", 'w') as file:
-                    file.write(f"C:/Users/{reg.group(1)}/Desktop/")
-        else:
-            pass
-    
     return root.filename
 
 
