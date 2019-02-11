@@ -1,11 +1,8 @@
 ; General:
-;  - License:
-;     - This is your license key, not much else to say.
-;
 ;  - Discord Rich Presence:
 ;     - Allowed Options:
 ;        - Yes | This will enable the discord rich presence integration by default.
-;        - No  | This will disable the discord rich presence integration  by default.
+;        - No  | This will disable the discord rich presence integration by default.
 ;     - Recommended Option:
 ;        - Disabled.
 ;
@@ -27,7 +24,7 @@
 ;     - Allowed Options:
 ;        - Default                      | This will use the default saving location which is "Keepin' It Clean\{module}"
 ;        - Path to where you wanna save | This will be where everything is saved. Example: C:\Users\{username}\Desktop\Combo Utilities Output
-;        - Original                     | This will save the file to the folder it initally came from. Example: If you open a text file from your desktop, the cleaned file will be on your desktop.
+;        - Original [WIP!]              | This will save the file to the folder it initally came from. Example: If you open a text file from your desktop, the cleaned file will be on your desktop.
 ;     - Recommended Option:
 ;        - Default.
 ;

@@ -12,10 +12,10 @@ import string
 import subprocess
 import sys
 import time
-import webbrowser
 from collections import defaultdict
 from itertools import takewhile, repeat
 from tkinter import filedialog, Tk
+import json
 
 
 def install_modules(module):
@@ -58,30 +58,24 @@ mem = virtual_memory()
 width = shutil.get_terminal_size().columns
 PYTHONDONTWRITEBYTECODE = 1
 
-config = configparser.ConfigParser()
-configfile_name = "config.ini"
-if not os.path.isfile(configfile_name):
-    colorama.init()
-    print(Fore.YELLOW + 'All configuration values can be changed at any time by opening the "Config.ini" file.')
+if not os.path.isfile("config.json"):
     # Create the configuration file as it doesn't exist yet
-    cfgfile = open(configfile_name, 'w')
-
+    cfgfile = open("config.json", 'w')
+    config = {"DiscordRichPresence": None,"FileNameType": None, "RandomMenuColor": None, "SaveLocation": None, "ProgressBar": None}
     # Add content to the file
-    Config = configparser.ConfigParser()
-    Config.add_section('General')
-    drpyn = input("Would you like to enable discord rich presence by default? [Yes/No] ")
-    docfiles = input("Would you like to use custom or default file names by default? [Custom/Default] ")
-    rmc = input("Would you like the program to randomly select the colors of 'Combo Utilities' on start up? [Yes/No] ")
-    dsl = input("Would you like to save the output to a different location? [Full file path to save to/Default] ")
-    pbar = input("Would you like to use a progress bar? [Yes/No] ")
-    Config.set('General', 'Discord Rich Presence', str(drpyn))
-    Config.set('General', 'File Name Type', str(docfiles))
-    Config.set('General', 'random menu color', str(rmc))
-    Config.set('General', 'file save location', str(dsl))
-    Config.set('General', 'progress bar', str(pbar))
+    drpyn = input("Would you like to enable discord rich presence by default? [True/False] ")
+    docfiles = input("\nWould you like to use custom or default file names by default? [Custom/Default] ")
+    rmc = input("\nWould you like the program to randomly select the colors of 'Combo Utilities' on start up? [True/False] ")
+    dsl = input("\nWould you like to save the output to a different location? [Full file path to save to/Default] ")
+    pbar = input("\nWould you like to use a progress bar? [True/False] ")
+    config["DiscordRichPresence"] = drpyn
+    config["FileNameType"] = docfiles
+    config["RandomMenuColor"] = rmc
+    config["SaveLocation"] = dsl
+    config["ProgressBar"] = pbar
 
-    Config.write(cfgfile)
-    cfgfile.close()
+    with open("config.json", "w") as file:
+        json.dump(config, cfgfile, indent=4)
 
 
 def savelocation(mode):
@@ -101,8 +95,8 @@ def savebadlines(mode):
 
 
 def files(mode):
-    config.read('config.ini')
-    filetypec = config.get('General', 'file name type')
+    config = json.loads(open("config.json").read())
+    filetypec = config["FileNameType"]
 
     if filetypec == "Default":
         dmode = dict(ComboCleaner="Combo Cleaner ",
@@ -138,21 +132,21 @@ def files(mode):
 
 
 def progressbar(file, amount):
-    config.read('config.ini')
-    if config.get('General', 'progress bar') == "Yes":
+    config = json.loads(open("config.json").read())
+    if config["ProgressBar"] == "True":
         return tqdm(file, desc="Cleaning", total=amount, smoothing=1, ascii=True, unit=" lines", position=0, leave=False)
-    elif config.get('General', 'progress bar') == "No":
+    elif config["ProgressBar"] == "False":
         return tqdm(file, disable=True)
     else:
         exit('Invalid config file [Line: 7]')
 
 
 def randomcolor():
-    config.read('config.ini')
-    if config.get('General', 'random menu color') == "Yes":
+    config = json.loads(open("config.json").read())
+    if config["RandomMenuColor"] == "True":
         colors = (Fore.RED, Fore.YELLOW, Fore.MAGENTA, Fore.CYAN, Fore.LIGHTRED_EX, Fore.LIGHTMAGENTA_EX, Fore.LIGHTBLUE_EX)
         return random.choice(colors)
-    elif config.get('General', 'random menu color') == "No":
+    elif config["RandomMenuColor"] == "False":
         return Fore.YELLOW
 
     else:
@@ -209,7 +203,7 @@ def openfile():
         if config.get('General', 'file save location') == "Original":
             try:
                 with open(os.getcwd() + "/lastlocation.txt", 'w') as tempfile:
-                    match = re.match("(.*\/.*).txt", str(root.filename))
+                    match = re.match(r"(.*\/.*).txt", str(root.filename))
                     tempfile.writelines(match.group(1))
             except FileNotFoundError:
                 user = os.path.expanduser("~")
@@ -1866,7 +1860,7 @@ def password_filterer():
 
 
 if __name__ == '__main__':
-    config.read('config.ini')
+    config = json.loads(open("config.json").read())
     to_write.clear()
     try:
         shutil.rmtree("./__pycache__", ignore_errors=True)
@@ -1874,16 +1868,15 @@ if __name__ == '__main__':
         settitle()
         try:
             RPC = Presence("446884598165536788")
-            if config.get("General", "Discord Rich Presence") == "Yes":
+            if config["DiscordRichPresence"] == "Yes":
                 RPC.connect()
                 current_time = time.time()
                 ct = str(current_time).split(".")[0]
                 RPC.update(state="Using the tool? What do you expect this to say..?", details="Made by Kid#0001", large_image="large", start=int(ct))
-                if config.get("General", "Discord Rich Presence") == "No":
+                if config["DiscordRichPresence"] == "No":
                     pass
         except Exception as e:
-            print("Discord client most likely not running, unable to start discord rich presence. [Or invalid config choice, [Line: 3]]")
-            pass
+            print(e)
         createfiles()
         menu()
     except Exception as e:
