@@ -1,2 +1,2 @@
-python "Combo Utilities.py"
+python ComboUtilities.py
 pause

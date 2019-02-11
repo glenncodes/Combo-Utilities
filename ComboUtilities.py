@@ -30,32 +30,27 @@ try:
     colorama.init()
 except ModuleNotFoundError:
     print("Colorama not found, Installing..")
-    install_modules("colorama")
-    exit("Please restart")
+    exit(install_modules("colorama"))
 try:
     import requests
 except ModuleNotFoundError:
     print("Requests not found, Installing..")
-    install_modules("requests")
-    exit("Please restart")
+    exit(install_modules("requests"))
 try:
     from pypresence import Presence
 except ModuleNotFoundError:
     print("PyPresence not found, Installing..")
-    install_modules("pypresence")
-    exit("Please restart")
+    exit(install_modules("pypresence"))
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
     print("Tqdm not found, Installing..")
-    install_modules("tqdm")
-    exit("Please restart")
+    exit(install_modules("tqdm"))
 try:
     from psutil import virtual_memory
 except ModuleNotFoundError:
     print("Psutil not found, Installing..")
-    install_modules("psutil")
-    exit("Please restart")
+    exit(install_modules("psutil"))
 
 to_write = []
 invalid_lines = []
@@ -74,13 +69,11 @@ if not os.path.isfile(configfile_name):
     # Add content to the file
     Config = configparser.ConfigParser()
     Config.add_section('General')
-    licensekey = input("Your license key: ")
     drpyn = input("Would you like to enable discord rich presence by default? [Yes/No] ")
     docfiles = input("Would you like to use custom or default file names by default? [Custom/Default] ")
     rmc = input("Would you like the program to randomly select the colors of 'Combo Utilities' on start up? [Yes/No] ")
     dsl = input("Would you like to save the output to a different location? [Full file path to save to/Default] ")
     pbar = input("Would you like to use a progress bar? [Yes/No] ")
-    Config.set('General', "License", str(licensekey))
     Config.set('General', 'Discord Rich Presence', str(drpyn))
     Config.set('General', 'File Name Type', str(docfiles))
     Config.set('General', 'random menu color', str(rmc))
@@ -1872,57 +1865,27 @@ def password_filterer():
         menu()
 
 
-def get_id():
-    if platform.system() == "Windows":
-        return str(subprocess.check_output("wmic csproduct get uuid").rstrip()).split("UUID ")[1].replace(" ", "").replace("\\r\\r\\n", "").replace("'", "")
-    else:
-        return subprocess.check_output(["sudo", "dmidecode", "-ssystem-uuid"])
-
-
 if __name__ == '__main__':
     config.read('config.ini')
     to_write.clear()
-    version = requests.get("https://comboutils.000webhostapp.com/version.txt").text
-    localversion = "1.3"
     try:
-        license = config.get("General", "license")
-        if not license:
-            exit("Invalid license key, recheck it and try again.")
-        else:
-            try:
-                if localversion != version:
-                    print(Fore.YELLOW + 'Invalid version, opening site to download new version..')
-                    exit(webbrowser.open(f"https://comboutils.000webhostapp.com/versions/{version}.zip"))
-                else:
-                    try:
-                        randomstring = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(50))
-                        hi = randomstring
-                        privatekey = "&WuKGGpqxxg72x^2"
-                        hashed = hashlib.md5(f"{hi} + {privatekey}".encode("utf-8")).hexdigest()
-                        postdata = {"rnd": hi, "license": license, "HWID": get_id()}
-                        response = requests.post("http://comboutils.000webhostapp.com/kidisanigger.php", data=postdata).text
-                        restoken = response.split(": ")[1]
-                        if restoken == hashed:
-                            shutil.rmtree("./__pycache__", ignore_errors=True)
-                            clear()
-                            settitle()
-                            try:
-                                RPC = Presence("446884598165536788")
-                                if config.get("General", "Discord Rich Presence") == "Yes":
-                                    RPC.connect()
-                                    current_time = time.time()
-                                    ct = str(current_time).split(".")[0]
-                                    RPC.update(state="Using the tool? What do you expect this to say..?", details="Made by Kid#0001", large_image="large", start=int(ct))
-                                if config.get("General", "Discord Rich Presence") == "No":
-                                    pass
-                            except Exception as e:
-                                print("Discord client most likely not running, unable to start discord rich presence. [Or invalid config choice, [Line: 3]]")
-                                pass
-                            createfiles()
-                            menu()
-                    except Exception as e:
-                        exit('Invalid license key, Recheck it and try again.')
-            except Exception as e:
-                print(e)
+        shutil.rmtree("./__pycache__", ignore_errors=True)
+        clear()
+        settitle()
+        try:
+            RPC = Presence("446884598165536788")
+            if config.get("General", "Discord Rich Presence") == "Yes":
+                RPC.connect()
+                current_time = time.time()
+                ct = str(current_time).split(".")[0]
+                RPC.update(state="Using the tool? What do you expect this to say..?", details="Made by Kid#0001", large_image="large", start=int(ct))
+                if config.get("General", "Discord Rich Presence") == "No":
+                    pass
+        except Exception as e:
+            print("Discord client most likely not running, unable to start discord rich presence. [Or invalid config choice, [Line: 3]]")
+            pass
+        createfiles()
+        menu()
     except Exception as e:
         print(e)
+        pass
