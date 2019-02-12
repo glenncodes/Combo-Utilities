@@ -1829,8 +1829,8 @@ if __name__ == '__main__':
                 current_time = time.time()
                 ct = str(current_time).split(".")[0]
                 RPC.update(state="Using the tool? What do you expect this to say..?", details="Made by Kid#0001", large_image="large", start=int(ct))
-                if config["DiscordRichPresence"] == "No":
-                    pass
+            else:
+                pass
         except Exception as e:
             print(e)
         createfiles()
