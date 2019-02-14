@@ -1,10 +1,8 @@
 # Combo Utilities
 Advanced combo management tool
-
-##Configration
+## Configration
 Configure Combo Utilities to your needs
-
-###General
+### General
   * Discord Rich Presence:
      * Allowed Options:
         * Yes | This will enable the discord rich presence integration by default.
