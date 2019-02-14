@@ -1,7 +1,9 @@
 # Combo Utilities
 Advanced combo management tool
+
 ##Configration
 Configure Combo Utilities to your needs
+
 ###General
   * Discord Rich Presence:
      * Allowed Options:
