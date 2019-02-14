@@ -1,5 +1,5 @@
 # Combo Utilities
-Advenced combo management tool
+Advanced combo management tool
 ##Configration
 Configure Combo Utilities to your needs
 ###General
