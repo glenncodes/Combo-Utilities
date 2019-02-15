@@ -1,6 +1,6 @@
 # Combo Utilities
 Advanced combo management tool
-## Configration
+## Configuration
 Configure Combo Utilities to your needs
 ### General
   * Discord Rich Presence:
@@ -37,3 +37,6 @@ Configure Combo Utilities to your needs
         * No  | This won't display the progress bar.
      * Recommended Option:
         * Up to you.
+
+### Issues
+If you have an issue, open an issue request on GitHub, Do not contact me on discord under any circumstance.
