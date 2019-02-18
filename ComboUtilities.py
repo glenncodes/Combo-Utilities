@@ -1824,7 +1824,7 @@ if __name__ == '__main__':
         settitle()
         try:
             RPC = Presence("446884598165536788")
-            if config["DiscordRichPresence"] == "Yes":
+            if config["DiscordRichPresence"] == "True":
                 RPC.connect()
                 current_time = time.time()
                 ct = str(current_time).split(".")[0]
