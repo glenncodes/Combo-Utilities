@@ -16,7 +16,6 @@ from itertools import takewhile, repeat
 from tkinter import filedialog, Tk
 import json
 
-
 def install_modules(module):
     if platform.system() == "Windows":
         return subprocess.call(f"pip install {module}")
@@ -29,31 +28,48 @@ try:
     colorama.init()
 except ModuleNotFoundError:
     print("Colorama not found, Installing..")
-    exit(install_modules("colorama"))
+    install_modules("colorama")
+    try:
+        import colorama
+        from colorama import Style, Fore
+        colorama.init()
+    except Exception:
+        exit("Unable to install colorama, exiting.")
 try:
     import requests
 except ModuleNotFoundError:
     print("Requests not found, Installing..")
-    exit(install_modules("requests"))
+    install_modules("requests")
+    try:
+        import requests
+    except Exception:
+        exit("Unable to install requests, exiting.")
 try:
     from pypresence import Presence
 except ModuleNotFoundError:
     print("PyPresence not found, Installing..")
-    exit(install_modules("pypresence"))
+    install_modules("pypresence")
+    try:
+        from pypresence import Presence
+    except Exception:
+        exit("Unable to install pypresence, exiting.")
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
     print("Tqdm not found, Installing..")
-    exit(install_modules("tqdm"))
+    install_modules("tqdm")
+    try:
+        from tqdm import tqdm
+    except Exception:
+        exit("Unable to install tqdm, exiting.")
 
+RPC = Presence("446884598165536788")
 to_write = []
-invalid_lines = []
 width = shutil.get_terminal_size().columns
 PYTHONDONTWRITEBYTECODE = 1
 
 if not os.path.isfile("config.json"):
     # Create the configuration file as it doesn't exist yet
-    cfgfile = open("config.json", 'w')
     config = {"DiscordRichPresence": None,"FileNameType": None, "RandomMenuColor": None, "SaveLocation": None, "ProgressBar": None}
     # Add content to the file
     drpyn = input("Would you like to enable discord rich presence by default? [True/False] ")
@@ -68,31 +84,24 @@ if not os.path.isfile("config.json"):
     config["ProgressBar"] = pbar
 
     with open("config.json", "w") as file:
-        json.dump(config, cfgfile, indent=4)
+        json.dump(config, file, indent=2)
 
 
 def savelocation(mode):
-    location = json.loads(open("config.json").read())["SaveLocation"]
-        
-    if location == "Original":
-        return open(os.getcwd() + "/lastlocation.txt").readline()
-    elif location == "Default":
+    with open("config.json") as json_file:
+        data = json.load(json_file)
+
+    if data["SaveLocation"] == "Default":
         return os.getcwd() + f"/Keepin' It Clean/{mode}"
     else:
-        return str(location)
+        return str(data["SaveLocation"])
     
-
-def savebadlines(mode):
-    with open(os.getcwd() + f"/Keepin' It Clean/{mode}/Invalid lines.txt", "w") as badlinesfile:
-        badlinesfile.writelines(invalid_lines)
-
-
 def files(mode):
-    config = json.loads(open("config.json").read())
-    filetypec = config["FileNameType"]
+    with open("config.json") as f:
+        data = json.load(f)
 
-    if filetypec == "Default":
-        dmode = dict(ComboCleaner="Combo Cleaner ",
+    if data["FileNameType"] == "Default":
+        umode = dict(ComboCleaner="Combo Cleaner ",
                      ComboCombiner="Combo Combiner ",
                      ComboParser="Combo Parser ",
                      ComboSorter="Combo Sorter ",
@@ -112,38 +121,44 @@ def files(mode):
                      RandomUtilities="Random Utilities ",
                      ComboParser1="Combo Parser[Usernames] ",
                      ComboParser2="Combo Parser[Passwords] ")
-        return dmode.get(mode)
+        return umode.get(mode)
 
-    elif filetypec == "Custom":
-        print(Fore.YELLOW + "[?] Adding '.txt' isn't needed.".center(width) + Style.RESET_ALL)
-        cmode = input(Fore.YELLOW + "Input the file name you'd like to use: ".center(width).split(": ")[0] + ": ")
-
-        return cmode
+    elif data["FileNameType"] == "Custom":
+        if mode in ("DomainSorter", "Domain Sorter"):
+            return "Domain Sorter "
+        else:
+            print(Fore.YELLOW + "[*] Adding '.txt' isn't needed.".center(width) + Style.RESET_ALL)
+            umode = input(Fore.YELLOW + "Input the file name you'd like to use: ".center(width).split(": ")[0] + ": ")
+            return umode
 
     else:
-        exit('Invalid config file [Line: 4]')
+        exit('Invalid config file option | File Name Type | Line 2')
 
 
 def progressbar(file, amount):
-    config = json.loads(open("config.json").read())
-    if config["ProgressBar"] == "True":
+    with open("config.json") as f:
+        data = json.load(f)
+
+    if data["ProgressBar"] == "True":
         return tqdm(file, desc="Cleaning", total=amount, smoothing=1, ascii=True, unit=" lines", position=0, leave=False)
-    elif config["ProgressBar"] == "False":
+    elif data["ProgressBar"] == "False":
         return tqdm(file, disable=True)
     else:
-        exit('Invalid config file [Line: 7]')
+        exit('Invalid config file option | Progress bar | Line 5')
 
 
 def randomcolor():
-    config = json.loads(open("config.json").read())
-    if config["RandomMenuColor"] == "True":
+    with open("config.json") as f:
+        data = json.load(f)
+
+    if data["RandomMenuColor"] == "True":
         colors = (Fore.RED, Fore.YELLOW, Fore.MAGENTA, Fore.CYAN, Fore.LIGHTRED_EX, Fore.LIGHTMAGENTA_EX, Fore.LIGHTBLUE_EX)
         return random.choice(colors)
-    elif config["RandomMenuColor"] == "False":
+    elif data["RandomMenuColor"] == "False":
         return Fore.YELLOW
 
     else:
-        exit('Invalid config file [Line: 5]')
+        exit('Invalid config file option | Random Menu Color | Line 3')
 
 
 def rawbigcount(filename):
@@ -174,66 +189,52 @@ def openfile():
 
 def settitle():
     if platform.system() == "Windows":
-        return ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 1.3")
+        return ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a")
     elif platform.system() == "Linux":
-        return sys.stdout.write("\x1b]2;Combo Utilities | Version 1.3\x07")
+        return sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07")
 
 
 def createfiles():
     if not os.path.exists("Keepin' It Clean"):
-        print("Main folder does't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean")
 
     if not os.path.exists("Keepin' It Clean/Combo Cleaner"):
-        print("Folder: Combo Cleaner doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Cleaner")
 
     if not os.path.exists("Keepin' It Clean/Combo Combiner"):
-        print("Folder: 'Combo Combiner' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Combiner")
 
     if not os.path.exists("Keepin' It Clean/Combo Parser"):
-        print("Folder: 'Combo Parser' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Parser")
 
     if not os.path.exists("Keepin' It Clean/Combo Sorter"):
-        print("Folder: 'Combo Sorter' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Sorter")
 
     if not os.path.exists("Keepin' It Clean/Combo Splitter"):
-        print("Folder: 'Combo Splitter' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Splitter")
 
     if not os.path.exists("Keepin' It Clean/Domain Sorter"):
-        print("Folder: 'Domain Sorter' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Domain Sorter")
 
     if not os.path.exists("Keepin' It Clean/Duplicate Remover"):
-        print("Folder: 'Duplicate Remover' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Duplicate Remover")
 
     if not os.path.exists("Keepin' It Clean/Email To Username"):
-        print("Folder: 'Email To Username' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Email To Username")
 
     if not os.path.exists("Keepin' It Clean/Empty Line Remover"):
-        print("Folder: 'Empty Line Remover' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Empty Line Remover")
 
     if not os.path.exists("Keepin' It Clean/Line Counter"):
-        print("Folder: 'Line Counter' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Line Counter")
 
     if not os.path.exists("Keepin' It Clean/Randomize Lines"):
-        print("Folder: 'Randomize Lines' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Randomize Lines")
 
     if not os.path.exists("Keepin' It Clean/Random Utilities"):
-        print("Folder: 'Random Utilities' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Random Utilities")
 
     if not os.path.exists("Keepin' It Clean/Password Filterer"):
-        print("Folder: 'Password Filterer' doesn't exist. Creating..")
         os.makedirs(os.getcwd() + "/Keepin' It Clean/Password Filterer")
 
 
@@ -327,6 +328,7 @@ def combo_cleaner():
     to_write.clear()
     count = 0
     clear()
+    RPC.update(state="Combo Cleaner", details="Version 0.1a", large_image="large", start=int(ct))
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Replace all ;'s with :'s")
     print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing { or }")
     print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Remove all lines that don't contain : or ;")
@@ -342,6 +344,7 @@ def combo_cleaner():
 
         if select == "1":
             with open(openfile(), 'r', errors="ignore") as file:
+                RPC.update(state="Editing file: {}".format(os.path.split(file.name)[-1]), details="Combo Cleaner | Option 1", large_image="large", start=int(ct))
                 total_lines = rawbigcount(file.name)
                 start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
@@ -365,6 +368,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "2":
+            RPC.update(state="Combo Cleaner | Option 2", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -388,6 +392,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "3":
+            RPC.update(state="Combo Cleaner | Option 3", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -411,6 +416,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "4":
+            RPC.update(state="Combo Cleaner | Option 4", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -432,6 +438,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "5":
+            RPC.update(state="Combo Cleaner | Option 5", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -454,6 +461,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "6":
+            RPC.update(state="Combo Cleaner | Option 6", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -483,6 +491,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "7":
+            RPC.update(state="Combo Cleaner | Option 7", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -507,6 +516,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "8":
+            RPC.update(state="Combo Cleaner | Option 8", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -530,6 +540,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "9":
+            RPC.update(state="Combo Cleaner | Option 9", details="Version 0.1a", large_image="large", start=int(ct))
             with open(openfile(), 'r', errors="ignore") as file:
                 pick = input(Fore.YELLOW + "[?] Would you like to remove lines longer or shorter than x? | [longer/shorter]: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX).lower()
                 total_lines = rawbigcount(file.name)
@@ -567,7 +578,7 @@ def combo_cleaner():
     except TypeError as e:
         print(e)
         pleasewait()
-        menu()
+        MainMenu()
 
 
 def combo_combiner():
@@ -1010,130 +1021,64 @@ def domain_sorter():
     print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Sort by email domain [Gmail, Yahoo, Hotmail, Aol, Outlook, Icloud, Yandex, Live, Protonmail, Mail, Zoho, T-Online]")
     print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Filter all email domain")
     print(Fore.YELLOW + "[4]" + Fore.LIGHTWHITE_EX + " | Filter all email extensions.")
+    print(Fore.YELLOW + "[5]" + Fore.LIGHTWHITE_EX + " | Filter custom email domains.")
     print(Fore.YELLOW + "\nPress enter to go back to the main menu.\n")
     try:
         select = input(Fore.YELLOW + "[?] Select the module you'd like to use: " + Fore.LIGHTWHITE_EX)
         if select == "1":
-            com = []
-            de = []
-            ru = []
-            jp = []
-            couk = []
-            gov = []
-            net = []
-            org = []
-            edu = []
-            fr = []
-            ca = []
-            pl = []
-            es = []
-            it = []
-            other = []
+            d = defaultdict(list)
 
-            total = 0
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
-                start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
+                start = time.time()
                 for lines in progressbar(file, total_lines):
-                    if re.search(r"[@].*(\.com.*):", lines):
-                        total += 1
-                        com.append(lines)
-                    elif re.search(r"[@].*(\.de.*):", lines):
-                        total += 1
-                        de.append(lines)
-                    elif re.search(r"[@].*(\.ru.*):", lines):
-                        total += 1
-                        ru.append(lines)
-                    elif re.search(r"[@].*(\.jp.*):", lines):
-                        total += 1
-                        jp.append(lines)
-                    elif re.search(r"[@].*(\.co\.uk.*):", lines):
-                        total += 1
-                        couk.append(lines)
-                    elif re.search(r"[@].*(\.gov.*):", lines):
-                        total += 1
-                        gov.append(lines)
-                    elif re.search(r"[@].*(\.net.*):", lines):
-                        total += 1
-                        net.append(lines)
-                    elif re.search(r"[@].*(\.org.*):", lines):
-                        total += 1
-                        org.append(lines)
-                    elif re.search(r"[@].*(\.edu.*):", lines):
-                        total += 1
-                        edu.append(lines)
-                    elif re.search(r"[@].*(\.fr.*):", lines):
-                        total += 1
-                        fr.append(lines)
-                    elif re.search(r"[@].*(\.ca.*):", lines):
-                        total += 1
-                        ca.append(lines)
-                    elif re.search(r"[@].*(\.pl.*):", lines):
-                        total += 1
-                        pl.append(lines)
-                    elif re.search(r"[@].*(\.es.*):", lines):
-                        total += 1
-                        es.append(lines)
-                    elif re.search(r"[@].*(\.it.*):", lines):
-                        total += 1
-                        it.append(lines)
+                    if re.search(r"@.*\.com:", lines):
+                        d["COM"].append(lines)
+                    elif re.search(r"@.*\.de:", lines):
+                        d["DE"].append(lines)
+                    elif re.search(r"@.*\.ru:", lines):
+                        d["RU"].append(lines)
+                    elif re.search(r"@.*\.jp:", lines):
+                        d["JP"].append(lines)
+                    elif re.search(r"@.*\.co\.uk:", lines):
+                        d["COUK"].append(lines)
+                    elif re.search(r"@.*\.gov:", lines):
+                        d["GOV"].append(lines)
+                    elif re.search(r"@.*\.net:", lines):
+                        d["NET"].append(lines)
+                    elif re.search(r"@.*\.org:", lines):
+                        d["ORG"].append(lines)
+                    elif re.search(r"@.*\.edu:", lines):
+                        d["EDU"].append(lines)
+                    elif re.search(r"@.*\.fr:", lines):
+                        d["FR"].append(lines)
+                    elif re.search(r"@.*\.ca:", lines):
+                        d["CA"].append(lines)
+                    elif re.search(r"@.*\.pl:", lines):
+                        d["PL"].append(lines)
+                    elif re.search(r"@.*\.es:", lines):
+                        d["ES"].append(lines)
+                    elif re.search(r"@.*\.it:", lines):
+                        d["IT"].append(lines)
                     else:
-                        total += 1
-                        other.append(lines)
-            print(Fore.YELLOW + "[+] Lines sorted: %s".rstrip().center(width) % str(total))
+                        d["OTHERS"].append(lines)
             comout = savelocation("Domain Sorter") + "/" + str(files("DomainSorter"))
-            with open(comout + currenttime() + '[.com].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(com)
-            with open(comout + currenttime() + '[.de].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(de)
-            with open(comout + currenttime() + '[.ru].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(ru)
-            with open(comout + currenttime() + '[.jp].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(jp)
-            with open(comout + currenttime() + '[.co.uk].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(couk)
-            with open(comout + currenttime() + '[.gov].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(gov)
-            with open(comout + currenttime() + '[.net].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(net)
-            with open(comout + currenttime() + '[.org].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(org)
-            with open(comout + currenttime() + '[.edu].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(edu)
-            with open(comout + currenttime() + '[.fr].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(fr)
-            with open(comout + currenttime() + '[.ca].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(ca)
-            with open(comout + currenttime() + '[.pl].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(pl)
-            with open(comout + currenttime() + '[.es].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(es)
-            with open(comout + currenttime() + '[.it].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(it)
-            with open(comout + currenttime() + '[Others].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(other)
+            try:
+                for key in d.keys():
+                    if len(d.get(key)) >= 1:
+                        with open(comout + currenttime() + f'[{key.replace(":", "").lower()}].txt', 'a', errors="ignore") as outfile:
+                            outfile.writelines(d.get(key))
+            except Exception as e:
+                print(e)
+                pass
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
             domain_sorter()
 
         if select == "2":
-            gmail = []
-            yahoo = []
-            hotmail = []
-            aol = []
-            outlook = []
-            icloud = []
-            yandex = []
-            live = []
-            protonmail = []
-            mail = []
-            zoho = []
-            tonline = []
-            other = []
-
-            total = 0
+            d = defaultdict(list)
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -1141,72 +1086,36 @@ def domain_sorter():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 for lines in progressbar(file, total_lines):
                     if re.search(r"[@](gmail.*):", lines):
-                        total += 1
-                        gmail.append(lines)
+                        d["GMAIL"].append(lines)
                     elif re.search(r"[@](yahoo.*):", lines):
-                        total += 1
-                        yahoo.append(lines)
+                        d["YAHOO"].append(lines)
                     elif re.search(r"[@](hotmail.*):", lines):
-                        total += 1
-                        hotmail.append(lines)
+                        d["HOTMAIL"].append(lines)
                     elif re.search(r"[@](aol.*):", lines):
-                        total += 1
-                        aol.append(lines)
+                        d["AOL"].append(lines)
                     elif re.search(r"[@](outlook.*):", lines):
-                        total += 1
-                        outlook.append(lines)
+                        d["OUTLOOK"].append(lines)
                     elif re.search(r"[@](icloud.*):", lines):
-                        total += 1
-                        icloud.append(lines)
+                        d["ICLOUD"].append(lines)
                     elif re.search(r"[@](yandex.*):", lines):
-                        total += 1
-                        yandex.append(lines)
+                        d["YANDEX"].append(lines)
                     elif re.search(r"[@](live.*):", lines):
-                        total += 1
-                        live.append(lines)
-                    elif re.search(r"[@](protonmail.*):", lines):
-                        total += 1
-                        protonmail.append(lines)
+                        d["LIVE"].append(lines)
                     elif re.search(r"[@](mail.*):", lines):
-                        total += 1
-                        mail.append(lines)
-                    elif re.search(r"[@](zoho.*):", lines):
-                        total += 1
-                        zoho.append(lines)
+                        d["MAIL"].append(lines)
                     elif re.search(r"[@](t-online.*):", lines):
-                        total += 1
-                        tonline.append(lines)
+                        d["TONLINE"].append(lines)
                     else:
-                        total += 1
-                        other.append(lines)
-            print("[+] lines Sorted: %s".center(width) % str(total))
-            comout = savelocation("Domain Sorter") + "/" + str(files("DomainSorter"))
-            with open(comout + currenttime() + '[Gmail].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(gmail)
-            with open(comout + currenttime() + '[Yahoo].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(yahoo)
-            with open(comout + currenttime() + '[Hotmail].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(hotmail)
-            with open(comout + currenttime() + '[Aol].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(aol)
-            with open(comout + currenttime() + '[Outlook].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(outlook)
-            with open(comout + currenttime() + '[ICloud].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(icloud)
-            with open(comout + currenttime() + '[Yandex].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(yandex)
-            with open(comout + currenttime() + '[Live].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(live)
-            with open(comout + currenttime() + '[ProtonMail].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(protonmail)
-            with open(comout + currenttime() + '[Mail].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(mail)
-            with open(comout + currenttime() + '[Zoho].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(zoho)
-            with open(comout + currenttime() + '[T-Online].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(tonline)
-            with open(comout + currenttime() + '[Others].txt', 'a+', errors="ignore") as outfile:
-                outfile.writelines(other)
+                        d["OTHERS"].append(lines)
+            try:
+                for key in d.keys():
+                    if len(d.get(key)) >= 1:
+                        comout = savelocation("Domain Sorter") + "/" + str(files("DomainSorter"))
+                        with open(comout + currenttime() + f'[{key.replace(":", "").lower()}].txt', 'a', errors="ignore") as outfile:
+                            outfile.writelines(d.get(key))
+            except Exception as e:
+                print(e)
+                pass
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
             domain_sorter()
@@ -1221,11 +1130,10 @@ def domain_sorter():
                 for lines in progressbar(file, total_lines):
                     reg = re.search(r'@(.*):', lines)
                     d[reg.group(1)].append(lines)
-            for keys in d.keys():
-                output = savelocation("Domain Sorter") + "/" + str(files("DomainSorter")) + currenttime() + "[{}].txt".format(keys)
+            for key in d.keys():
+                output = savelocation("Domain Sorter") + "/" + str(files("DomainSorter")) + currenttime() + "[{}].txt".format(key.replace(":", "").lower())
                 with open(output, 'a+', errors="ignore") as outfile:
-                    outfile.writelines(d.get(keys))
-            print(Fore.YELLOW + "[+] lines Sorted: %s".center(width) % total_lines)
+                    outfile.writelines(d.get(key))
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
             domain_sorter()
@@ -1241,25 +1149,21 @@ def domain_sorter():
                     for lines in progressbar(file, total_lines):
                         reg = re.search(r"@[^.]*(\..*\..*|\..*):", lines)
                         d[reg.group(1)].append(lines)
-                    for keys in d.keys():
-                        output = savelocation("Domain Sorter") + "/" + str(files("DomainSorter")) + currenttime() + "[{}].txt".format(keys).replace("\\", "(Replaced)").replace("/", "(Replaced)").replace(":", "(Replaced)").replace("*", "(Replaced)").replace("?", "(Replaced)").replace('"', "(Replaced)").replace("<", "(Replaced)").replace(">", "(Replaced)").replace("|", "(Replaced)")
+                    for key in d.keys():
+                        output = savelocation("Domain Sorter") + "/" + str(files("DomainSorter")) + currenttime() + "[{}].txt".format(key.replace(":", "").lower())
                         with open(output, 'a+', errors="replace") as outfile:
-                            outfile.writelines(d.get(keys))
+                            outfile.writelines(d.get(key))
                 except Exception as e:
                     print(e)
-                    pleasewait()
                     pass
-            print(Fore.YELLOW + "[+] lines Sorted: %s".center(width) % total_lines)
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
             domain_sorter()
         
         if select == "5":
+            # TODO | Think it works - need feedback
             d = defaultdict(list)
-            print(d.keys())
-            temp = [input("Select yo domains bitch: " ).replace(" ", "").split(",")]
-            print(temp)
-            print(d.keys())
+            domains = [x for x in input("Select domains [Seperated with a space]: ").split(" ")]
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
@@ -1267,28 +1171,25 @@ def domain_sorter():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 try:
                     for lines in progressbar(file, total_lines):
-                        for line in temp:
-                            reg = re.search(f"[@]({line}.*):", lines)
-                            print(reg.re)
-                            print(line)
+                        for line in domains:
+                            reg = re.search(f"@({line}):", lines)
                             if reg:
                                 d[reg.group(1)].append(lines)
                             else:
                                 pass
-                    for keys in d.keys():
-                        output = savelocation("Domain Sorter") + "/" + str(files("DomainSorter")) + currenttime() + "[{}].txt".format(keys).replace("\\", "(Replaced)").replace("/", "(Replaced)").replace(":", "(Replaced)").replace("*", "(Replaced)").replace("?", "(Replaced)").replace('"', "(Replaced)").replace("<", "(Replaced)").replace(">", "(Replaced)").replace("|", "(Replaced)")
+                    for key in d.keys():
+                        output = savelocation("Domain Sorter") + "/" + str(files("DomainSorter")) + currenttime() + "[{}].txt".format(key.replace(":", "").lower())
                         with open(output, 'a+', errors="replace") as outfile:
-                            outfile.writelines(d.get(keys))
+                            outfile.writelines(d.get(key))
                 except Exception as e:
                     print(e)
-                    pleasewait()
                     pass
             print(Fore.YELLOW + "[+] lines Sorted: %s".center(width) % total_lines)
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
             domain_sorter()
         
-    except TypeError as e:
+    except Exception as e:
         print(e)
         pleasewait()
         menu()
@@ -1302,24 +1203,13 @@ def duplicate_remover():
         start = time.time()
         print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
         print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
-        try:
-            for lines in progressbar(file, total_lines):
-                to_write.append(lines)
-        except Exception as e:
-            print(f"Error 1\nDuplicate Remover\n{e}")
-            pass
-    try:
-        uniquelines = list(set(to_write))
-    except Exception as e:
-        print(f"Error 2\nDuplicate Remover\n{e}")
-        print(e)
-        pass
+        uniquelines = set(file.readlines())
 
-    if len(uniquelines) - len(to_write) != 0:
+    if not len(uniquelines) == total_lines:
         output = savelocation("Duplicate Remover") + "/" + str(files("DuplicateRemover"))
         with open(output + currenttime() + '.txt', 'w', errors="ignore") as outfile:
             outfile.writelines(uniquelines)
-        print("[+] Duplicates Removed: %s".center(width) % str(len(to_write) - len(uniquelines)))
+        print("[+] Duplicates Removed: %s".center(width) % str(int(total_lines) - len(uniquelines)))
     else:
         print("[-] No duplicates found".center(width))
     print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
@@ -1338,15 +1228,14 @@ def email_to_user():
 
         output = savelocation("Email To Username") + "/" + str(files("EmailToUsername"))
 
-        for lines in enumerate(file):
-            nlinesa = lines[1].split(":")
-
-            to_write.append(f"{nlinesa[0].split('@')[0]}:{nlinesa[1]}")
+        for line in file:
+            lines = line.split(":")
+            to_write.append(lines[0].split("@")[0] + ":" + lines[1])
 
     print(Fore.YELLOW + "[+] lines Converted: %s".rstrip().center(width) % total_lines)
+    print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
     with open(output + currenttime() + '.txt', 'w', errors="ignore") as outfile:
         outfile.writelines(to_write)
-    print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
     pleasewait()
     menu()
 
@@ -1359,23 +1248,16 @@ def empty_lines_remover():
         start = time.time()
         print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
         print(Fore.YELLOW + "File contains {:,} lines.".format(total_lines).rstrip().center(width) + Style.RESET_ALL)
-        count = 0
 
-        for lines in progressbar(file, total_lines):
-            reg = re.search(r"^\s*$\r?\n", lines)
-            if reg:
-                count += 1
-                pass
-            else:
-                to_write.append(lines)
-    if count >= 1:
-        output = savelocation("Empty Line Remover") + "/" + str(files("EmptylinesRemover"))
-        with open(output + currenttime() + '.txt', 'w', errors="ignore") as outfile:
-            outfile.writelines(to_write)
-        print(Fore.YELLOW + "[+] Empty Lines Removed: %s".rstrip().center(width) % count)
+        cleaned = list(filter(lambda x: not re.match(r'^\s*$', x), file.readlines()))
         print(Fore.YELLOW + "[+] Time took: {}".rstrip().center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
-    else:
-        print(Fore.YELLOW + "No invalid lines were found.".rstrip().center(width))
+        if len(cleaned) >= 1 and len(cleaned) < total_lines:
+            output = savelocation("Empty Line Remover") + "/" + str(files("EmptylinesRemover"))
+            with open(output + currenttime() + '.txt', 'w', errors="ignore") as outfile:
+                outfile.writelines(cleaned)
+            print(Fore.YELLOW + "[+] Empty Lines Removed: %s".rstrip().center(width) % str(int(total_lines) - int(len(cleaned))))
+        else:
+            print(Fore.YELLOW + "No invalid lines were found.".rstrip().center(width))
     pleasewait()
     menu()
 
@@ -1550,7 +1432,6 @@ def hash_identifier():
 
 def password_filterer():
     to_write.clear()
-    invalid_lines.clear()
     count = 0
     clear()
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Remove all passwords that don't contain at least 1 uppercase letter.")
@@ -1572,7 +1453,6 @@ def password_filterer():
             with open(openfile(), 'r', errors="ignore") as file:
                 total_lines = rawbigcount(file.name)
                 start = time.time()
-                print(invalid_lines)
                 for lines in progressbar(file, total_lines):
                     try:
                         line = lines.split(':')[1]
@@ -1587,7 +1467,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1609,7 +1488,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1631,7 +1509,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1653,7 +1530,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1675,7 +1551,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1701,7 +1576,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1731,7 +1605,6 @@ def password_filterer():
                         continue
             with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            savebadlines("Password Filterer")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
             pleasewait()
@@ -1755,7 +1628,6 @@ def password_filterer():
             if count >= 1:
                 with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '[Fortnite].txt', 'w') as output:
                     output.writelines(to_write)
-                savebadlines("Password Filterer")
                 print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
                 print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
@@ -1779,7 +1651,6 @@ def password_filterer():
             if count >= 1:
                 with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '[Minecraft].txt', 'w') as output:
                     output.writelines(to_write)
-                savebadlines("Password Filterer")
                 print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
                 print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
@@ -1803,7 +1674,6 @@ def password_filterer():
             if count >= 1:
                 with open(savelocation('Password Filterer') + '/' + str(files("PasswordFilterer")) + currenttime() + '[Origin].txt', 'w') as output:
                     output.writelines(to_write)
-                savebadlines("Password Filterer")
                 print(Fore.YELLOW + "[+] Invalid passwords removed: {}".center(width).format(int(total_lines) - int(count) + 1))
                 print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             pleasewait()
@@ -1816,19 +1686,19 @@ def password_filterer():
 
 
 if __name__ == '__main__':
-    config = json.loads(open("config.json").read())
     to_write.clear()
     try:
         shutil.rmtree("./__pycache__", ignore_errors=True)
         clear()
         settitle()
         try:
-            RPC = Presence("446884598165536788")
-            if config["DiscordRichPresence"] == "True":
+            with open("config.json") as f:
+                data = json.load(f)
+            if data["DiscordRichPresence"] == "True":
                 RPC.connect()
                 current_time = time.time()
                 ct = str(current_time).split(".")[0]
-                RPC.update(state="Using the tool? What do you expect this to say..?", details="Made by Kid#0001", large_image="large", start=int(ct))
+                RPC.update(state="In the main menu", details="Version 0.1a", large_image="large", start=int(ct))
             else:
                 pass
         except Exception as e:
