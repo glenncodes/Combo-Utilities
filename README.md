@@ -28,8 +28,8 @@ Configure Combo Utilities to your needs
 
   * File Save Location: 
      * Allowed Options:
-        * Default                      | This will use the default saving location which is "Keepin' It Clean\<module>"
-        * Path to where you wanna save | This will be where everything is saved. Example: C:\Users\<username>\Desktop\Combo Utilities Output
+        * Default                      | This will use the default saving location which is "Keepin' It Clean\\<module>"
+        * Path to where you wanna save | This will be where everything is saved. Example: C:\\Users\<username>\Desktop\Combo Utilities Output
      * Recommended Option:
         * Default.
 
