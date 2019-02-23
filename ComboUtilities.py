@@ -161,18 +161,17 @@ def menu():
 
 def combo_cleaner():
     to_write.clear()
-    count = 0
     Utilities().clear()
     RPC.update(state="Combo Cleaner", details="Version 0.1a", large_image="large", start=int(ct))
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Replace all ;'s with :'s")
-    print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing { or }")
-    print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Remove all lines that don't contain : or ;")
-    print(Fore.YELLOW + "[4]" + Fore.LIGHTWHITE_EX + " | Remove all lines that don't contain @")
-    print(Fore.YELLOW + "[5]" + Fore.LIGHTWHITE_EX + " | Remove all lines that contain @")
+    print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing '{' or '}'")
+    print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Remove all lines not containing ':' or ';'")
+    print(Fore.YELLOW + "[4]" + Fore.LIGHTWHITE_EX + " | Remove all lines not containing '@'")
+    print(Fore.YELLOW + "[5]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing '@'")
     print(Fore.YELLOW + "[6]" + Fore.LIGHTWHITE_EX + " | Remove all of the above [Except option 5]" + Fore.LIGHTRED_EX + " [Most recommended!]" + Style.RESET_ALL)
     print(Fore.YELLOW + "[7]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing a certain string")
-    print(Fore.YELLOW + "[8]" + Fore.LIGHTWHITE_EX + " | Invalid combo remover [example@gmail.com: ] or [ :example]")
-    print(Fore.YELLOW + "[9]" + Fore.LIGHTWHITE_EX + " | Remove all lines longer than or shorter than x amount of characters")
+    print(Fore.YELLOW + "[8]" + Fore.LIGHTWHITE_EX + " | Invalid combo remover [example@example.com: ] or [ :example]")
+    print(Fore.YELLOW + "[9]" + Fore.LIGHTWHITE_EX + " | Remove all lines longer than or shorter than x")
     print(Fore.YELLOW + "\nPress enter to go back to the main menu.")
     try:
         select = input("\n" + Fore.YELLOW + "[?] Select the module you'd like to use: " + Fore.LIGHTWHITE_EX)
@@ -189,14 +188,12 @@ def combo_cleaner():
                     if ';' in lines:
                         line = lines.replace(";", ":")
                         to_write.append(line)
-                        count += 1
                     else:
                         to_write.append(lines)
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -212,15 +209,13 @@ def combo_cleaner():
 
                 for lines in Utilities().progressbar(file, total_lines):
                     if "{" in lines or "}" in lines:
-                        count += 1
                         pass
                     else:
                         to_write.append(lines)
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() +  '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -235,16 +230,14 @@ def combo_cleaner():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 for lines in Utilities().progressbar(file, total_lines):
-                    if ":" not in lines or ";" not in lines:
-                        count += 1
-                        pass
-                    else:
+                    if ":" in lines or ";" in lines:
                         to_write.append(lines)
-            if count >= 1:
+                    else:
+                        print(lines)
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -255,18 +248,17 @@ def combo_cleaner():
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
-                print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
+                print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 for lines in Utilities().progressbar(file, total_lines):
                     if "@" not in lines:
-                        count += 1
+                        pass
                     else:
                         to_write.append(lines)
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -280,16 +272,14 @@ def combo_cleaner():
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 for lines in Utilities().progressbar(file, total_lines):
-                    if "@" in lines:
-                        count += 1
-                        pass
-                    else:
+                    if "@" not in lines:
                         to_write.append(lines)
-            if count >= 1:
+                    else:
+                        pass
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -302,24 +292,23 @@ def combo_cleaner():
                 start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines+1).center(width) + Style.RESET_ALL)
-                temp = []
                 for lines in Utilities().progressbar(file, total_lines):
-                    if ";" in lines:
-                        line = lines.replace(";", ":")
-                        temp.append(line)
-                    else:
-                        temp.append(lines)
-                for lines in temp:
-                    if "{" in lines or "}" in lines or "@" not in lines or ":" not in lines:
-                        count += 1
+                    if "{" in lines or "}" in lines or "@" not in lines:
                         pass
                     else:
-                        to_write.append(lines)
-            if count >= 1:
+                        if ";" in lines:
+                            line = lines.replace(';', ':')
+                            to_write.append(line)
+                        else:
+                            if ":" not in lines:
+                                pass
+                            else:
+                                to_write.append(lines)
+
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -333,18 +322,16 @@ def combo_cleaner():
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
-                word = input(Fore.YELLOW + "[?] Input the word you would like to search for: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX)
+                word = input(Fore.YELLOW + "[?] Input the word to search for: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX)
                 for lines in Utilities().progressbar(file, total_lines):
-                    if re.search(word, lines, re.IGNORECASE):
-                        count += 1
+                    if word in lines:
                         pass
                     else:
                         to_write.append(lines)
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + f'{[word]}.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -359,16 +346,20 @@ def combo_cleaner():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 for lines in Utilities().progressbar(file, total_lines):
-                    if not lines_checker(lines):
-                        count += 1
+                    try:
+                        line = lines.split(":")
+                        if line[0] in ("\n", ""):
+                            pass
+                        elif line[1] in ("\n", ""):
+                            pass
+                        else:
+                            to_write.append(lines)
+                    except Exception:
                         pass
-                    else:
-                        to_write.append(lines)
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -384,27 +375,24 @@ def combo_cleaner():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 if pick == "longer":
-                    longest = int(input(Fore.YELLOW + "[?] How long would you like the maximum to be? ".center(width).split('? ')[0] + '? ' + Fore.LIGHTWHITE_EX))
+                    longest = int(input(Fore.YELLOW + "[?] How long should the maximum be? ".center(width).split('? ')[0] + '? ' + Fore.LIGHTWHITE_EX))
                     for lines in Utilities().progressbar(file, total_lines):
-                        if len(lines) >= longest:
-                            count += 1
+                        if len(lines) > longest:
                             pass
-                        elif len(lines) <= longest:
+                        else:
                             to_write.append(lines)
 
                 elif pick == "shorter":
-                    shortest = int(input(Fore.YELLOW + "[?] How long would you like the shortest to be? ".center(width).split('? ')[0] + '? ' + Fore.LIGHTWHITE_EX))
+                    shortest = int(input(Fore.YELLOW + "[?] How long should the shortest be? ".center(width).split('? ')[0] + '? ' + Fore.LIGHTWHITE_EX))
                     for lines in Utilities().progressbar(file, total_lines):
-                        if len(lines) <= shortest:
-                            count += 1
+                        if len(lines) < shortest:
                             pass
-                        elif len(lines) >= shortest:
+                        else:
                             to_write.append(lines)
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -429,37 +417,36 @@ def combo_combiner():
             print(Fore.YELLOW + "[+] You can select multiple combos!".center(width))
             root = Tk()
             root.withdraw()
-            root.filename = filedialog.askopenfilenames(initialdir=os.path.expanduser("~/Desktop"), title="Select combo list(s)", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
+            root.filename = filedialog.askopenfilenames(title="Select combo list(s)", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
             start = time.time()
-            lines = fileinput.input(root.filename, openhook=fileinput.hook_encoded("utf-8", errors="ignore"))
-            to_write.append(lines)
-
+            lines = fileinput.input(root.filename, openhook=fileinput.hook_encoded("ISO-8859-1", errors="ignore"))
+            
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             output = Utilities().savelocation("Combo Combiner") + "/" + Utilities().files("ComboCombiner")
             with open(output + Utilities().currenttime() + ".txt", "a", errors="ignore") as outfile:
                 outfile.writelines(lines)
 
             root.destroy()
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_combiner()
 
         if select == "2":
             root = Tk()
             root.withdraw()
-            root.filename = filedialog.askopenfilename(initialdir=os.path.expanduser("~/Desktop"), title="Select username list", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
-            with open(root.filename, "r") as user:
+            root.filename = filedialog.askopenfilename(title="Select username list", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
+            with open(root.filename, "r", errors="ignore") as user:
                 print(Fore.YELLOW + "Loaded {:,} usernames".center(width).format(Utilities().rawbigcount(root.filename)))
 
-                root.filename1 = filedialog.askopenfilename(initialdir=os.path.expanduser("~/Desktop"), title="Select password list", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
-                with open(root.filename1, "r") as passw:
+                root.filename1 = filedialog.askopenfilename(title="Select password list", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
+                with open(root.filename1, "r", errors="ignore") as passw:
                     print(Fore.YELLOW + "Loaded {:,} passwords".center(width).format(Utilities().rawbigcount(root.filename1)))
                     start = time.time()
                     for x, y in zip(user, passw):
                         to_write.append(x.strip() + ":" + y.strip() + '\n')
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             output = Utilities().savelocation("Combo Combiner") + '/' + Utilities().files("ComboCombiner")
             with open(output + Utilities().currenttime() + '.txt', "a", errors="ignore") as outfile:
                 outfile.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_combiner()
 
@@ -472,11 +459,9 @@ def combo_combiner():
 def combo_parser():
     to_write.clear()
     Utilities().clear()
-    count = 0
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Password:Email/Username -> Email/Username:Password [Works for reversing email:password too]")
     print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Username/email:Password:Email/username -> 2 files [user:pass, email:pass]")
-    print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Combo Parser")
-    print(Fore.YELLOW + "[4]" + Fore.LIGHTWHITE_EX + " | Email Extractor")
+    print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Email Extractor")
     print(Fore.YELLOW + "\nPress enter to go back to the main menu.")
     try:
         select = input("\n" + Fore.YELLOW + "[?] Select the module you'd like to use: " + Fore.LIGHTWHITE_EX)
@@ -491,12 +476,10 @@ def combo_parser():
                 for lines in Utilities().progressbar(file, total_lines):
                     tmp = lines.split(":")
                     to_write.append(tmp[0].rstrip() + ':' + tmp[1].rstrip() + '\n')
-                    count += 1
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Parser") + '/' + Utilities().files("ComboParser") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -513,16 +496,14 @@ def combo_parser():
 
                 for lines in Utilities().progressbar(file, total_lines):
                     eachlines = lines.split()
-                    count += 1
                     dest.append(eachlines[2] + ":" + eachlines[1] + "\n")
                     dest2.append(eachlines[0] + ":" + eachlines[1] + "\n")
-            if count >= 1:
+            if len(dest) >= 1 and len(dest2) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Parser") + '/' + Utilities().files("ComboParser1") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(dest)
                 with open(Utilities().savelocation("Combo Parser") + '/' + Utilities().files("ComboParser2") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile2:
                     outfile2.writelines(dest2)
-                print(Fore.YELLOW + "[+] Lines cleaned: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -534,55 +515,16 @@ def combo_parser():
                 start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
-                output = Utilities().savelocation("Combo Parser") + '/' + Utilities().files("ComboParser")
-                dest = open(output + Utilities().currenttime() + ".txt", "a", encoding="ANSI")
-                sep = input(Fore.YELLOW + "Separator: ".split(':')[0] + ':'.center(width))
-                try:
-                    _posa = int(input("[?] How many columns do you want to extract: "))
-                except ValueError:
-                    sys.exit("[-] No number given")
-                try:
-                    _posq = input("[?] How do you want to extract it (Example: 2:3:1): ").split(":")
-                except Exception:
-                    sys.exit("[-] Can't split with given separator")
-                print("[+] Splitting")
-                _ret_list = []
-                for _i in file:
-                    _spl = ""
-                    for _a in range(0, _posa):
-                        try:
-                            _spl += ":" + _i.rstrip().split(sep)[int(_posq[_a])]  # _sop
-                            count += 1
-                        except Exception as e:
-                            print(e)
-                            Utilities().pleasewait()
-                            pass
-                    _ret_list.append(_spl[1:] + "\n")
-                dest.writelines(_ret_list)
-            dest.close()
-            print(Fore.YELLOW + "[+] lines Sorted: %s".center(width) % count)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
-            Utilities().pleasewait()
-            combo_parser()
-
-        if select == "4":
-            with open(Utilities().openfile(), 'r', errors="ignore") as file:
-                total_lines = Utilities().rawbigcount(file.name)
-                start = time.time()
-                print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
-                print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 for lines in Utilities().progressbar(file, total_lines):
                     match = re.search(r"""(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])""", lines)
                     if match:
                         to_write.append(match.group(0) + "\n")
-                        count += 1
 
-            if count >= 1:
+            if len(to_write) >= 1:
+                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                 with open(Utilities().savelocation("Combo Parser") + '/' + Utilities().files("ComboParser") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
-                print(Fore.YELLOW + "[+] Emails extracted: {:,}".center(width).format(count))
-                print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
             Utilities().pleasewait()
@@ -614,10 +556,9 @@ def combo_sorter():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 start = time.time()
                 lines = sorted(file.readlines(), key=len)
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation("Combo Sorter") + '/' + Utilities().files("ComboSorter") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(lines)
-            print(Fore.YELLOW + "[+] Lines sorted: %s".center(width) % total_lines)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_sorter()
 
@@ -629,10 +570,10 @@ def combo_sorter():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 lines = sorted(file.readlines(), key=len, reverse=True)
-                
+            
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation("Combo Sorter") + "/" + Utilities().files("ComboSorter") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(lines)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_sorter()
 
@@ -643,9 +584,9 @@ def combo_sorter():
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
                 lines = sorted(file.readlines())
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation("Combo Sorter") + '/' + Utilities().files("ComboSorter") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(lines)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_sorter()
 
@@ -665,10 +606,9 @@ def combo_sorter():
                         lines = lines.rstrip()
                         result = "".join(lines) + ",\n"
                         to_write.append(result)
-
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation("Combo Sorter") + '/' + Utilities().files("ComboSorter") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_sorter()
 
@@ -687,11 +627,10 @@ def combo_sorter():
                         done.append(prefixorsuffix + f"{lines}")
                     else:
                         done = (["".join([x.strip(), prefixorsuffix, "\n"]) for x in file.readlines()])
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             output = Utilities().savelocation("Combo Sorter") + '/' + Utilities().files("ComboSorter")
             with open(output + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(done)
-            print(Fore.YELLOW + "[+] lines Sorted: %s".center(width) % total_lines)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_sorter()
 
@@ -703,23 +642,21 @@ def combo_sorter():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 email = input(Fore.YELLOW + "[?] What email would you like to add? [Domain [Example: gmail.com]/Random]".center(width).split("Random]")[0] + 'Random]: ').lower()
-                req = requests.get("http://comboutils.000webhostapp.com/email-providers.txt").json()
-
+                with open("email-providers.json") as json_file:
+                    emails = json.load(json_file)
                 for lines in Utilities().progressbar(file, total_lines):
                     if email == "random":
                         slines = lines.split(":")
                         username = slines[0]
-                        to_write.append(username + "@" + random.choice(req) + ":" + slines[1])
+                        to_write.append(username + "@" + random.choice(emails) + ":" + slines[1])
                     else:
                         slines = lines.split(":")
                         username = slines[0]
                         to_write.append(username + "@" + email + ":" + slines[1])
-
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             output = Utilities().savelocation("Combo Sorter") + '/' + Utilities().files("ComboSorter")
             with open(output + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(to_write)
-            print(Fore.YELLOW + "[+] lines Split: %s".center(width) % total_lines)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_sorter()
 
@@ -757,7 +694,6 @@ def combo_splitter():
                     dest.writelines(lines)
                     count += 1
 
-            print(Fore.YELLOW + "[+] Lines split: %s".center(width) % total_lines)
             dest.close()
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
@@ -776,24 +712,17 @@ def combo_splitter():
                 output = Utilities().savelocation("Combo Splitter") + "/" + Utilities().files("ComboSplitter2Email")
                 output2 = Utilities().savelocation("Combo Splitter") + "/" + Utilities().files("ComboSplitter2Password")
 
-                dest = open(output + Utilities().currenttime() + ".txt", "a", errors="ignore")
-                dest2 = open(output2 + Utilities().currenttime() + ".txt", "a", errors="ignore")
-
-                count = 0
-                try:
-                    for lines in file:
+                for lines in file:
+                    try:
                         inputlines = lines.split(":")
-                        to_write0.append(inputlines[0])
-                        to_write1.append(inputlines[1])
-                        count += 1
-                except IndexError:
-                    pass
-            for l, ll in zip(to_write0, to_write1):
-                dest.writelines("{}\n".format(l))
-                dest2.writelines("{}".format(ll))
-            dest.close()
-            dest2.close()
-            print("[+] lines Split: %s".center(width) % count)
+                        to_write0.append("{}".format(inputlines[0]))
+                        to_write1.append("{}\n".format(inputlines[1]))
+                    except Exception:
+                        pass
+            with open(output + Utilities().currenttime() + ".txt", "a", errors="ignore") as file1:
+                file1.writelines(to_write0)
+            with open(output2 + Utilities().currenttime() + ".txt", "a", errors="ignore") as file2:
+                file2.writelines(to_write1) 
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_splitter()
@@ -1120,19 +1049,16 @@ def lines_counter():
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
-                word = input(Fore.YELLOW + "Input the word you would like to search for: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX)
-                count = 0
+                word = input(Fore.YELLOW + "Input the word to search for: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX)
                 for lines in file:
                     if not word in lines:
                         pass
                     else:
-                        count += 1
                         to_write.append(lines)
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")            
             output = Utilities().savelocation("Line Counter") + "/" + Utilities().files("linesCounter") + "[{}]".format(word)
             with open(output + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(to_write)
-            print(Fore.YELLOW + "[+] lines Containing '{}': {}".center(width).format(word.capitalize(), count))
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             lines_counter()
 
@@ -1145,22 +1071,20 @@ def lines_counter():
 def randomize_lines():
     to_write.clear()
     Utilities().clear()
-    with open(Utilities().openfile(), 'r', errors="ignore") as inputf:
-        lines = inputf.readlines()
-        total_lines = Utilities().rawbigcount(inputf.name)
+    with open(Utilities().openfile(), 'r', errors="ignore") as file:
+        lines = file.readlines()
+        total_lines = Utilities().rawbigcount(file.name)
         start = time.time()
-        print(Fore.YELLOW + "Loaded {} ".format(os.path.basename(inputf.name)).center(width))
+        print(Fore.YELLOW + "Loaded {} ".format(os.path.basename(file.name)).center(width))
         print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
         output = Utilities().savelocation("Randomize Lines") + "/" + Utilities().files("Randomizelines")
-        with open(output + Utilities().currenttime() + ".txt", "a", errors="ignore") as output:
-            i = 0
-            amount = input(Fore.YELLOW + "[?] How many times would you like to randomize?: ".center(width).split(":")[0] + ": ")
-            while i < int(amount):
-                random.shuffle(lines)
-                i += 1
-                print(f"[+] Randomized {i} times.".center(width), end="\r")
-            output.writelines(lines)
+        amount = input(Fore.YELLOW + "[?] How many times would you like to randomize?: ".center(width).split(":")[0] + ": ")
+        for _ in range(int(amount)):
+            random.shuffle(lines)
+            print(f"[+] Randomized {_} times.".center(width), end="\r")
         print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
+        with open(output + Utilities().currenttime() + ".txt", "a", errors="ignore") as output:
+            output.writelines(lines)
         Utilities().pleasewait()
         menu()
 
@@ -1186,24 +1110,24 @@ def randomutilities():
                     start = time.time()
                     for _ in range(amount)[::-1]:
                         to_write.append(''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length)) + '\n')
+                    print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
                     outfile.writelines(to_write)
             else:
                 start = time.time()
                 for _ in range(amount)[::-1]:
                     print(Style.RESET_ALL + ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(length)))
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             randomutilities()
 
         if select == "2":
             output = Utilities().savelocation("Random Utilities") + "/" + Utilities().files("RandomUtilities")
-            length = int(str(input(Fore.YELLOW + "[?] Input the range you'd like to generate [Example: 1-1000]: ")).split("-")[1])
+            amount = int(str(input(Fore.YELLOW + "[?] Input how many numbers to generate: ".center(width).split(":")[0] + ":")))
             start = time.time()
-            for i in range(length+1):
+            for i in range(amount+1):
                 to_write.append(i)
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(output + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(str((x))+'\n' for x in to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             randomutilities()
 
@@ -1212,10 +1136,10 @@ def randomutilities():
                 start = time.time()
                 for lines in inputf:
                     to_write.append(lines.replace("\n", " "))
-                output = Utilities().savelocation("Random Utilities") + "/" + Utilities().files("RandomUtilities")
-                with open(output + Utilities().currenttime() + '.txt', 'w') as outfile:
-                    outfile.writelines(to_write)
+            output = Utilities().savelocation("Random Utilities") + "/" + Utilities().files("RandomUtilities")
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
+            with open(output + Utilities().currenttime() + '.txt', 'w') as outfile:
+                outfile.writelines(to_write)
             Utilities().pleasewait()
             randomutilities()
 
@@ -1232,10 +1156,10 @@ def randomutilities():
                         to_write.append(outputs)
                     except IndexError:
                         print(f"Unable to split at given delimiter: '{delimiter}'")
-                output = Utilities().savelocation("Random Utilities") + "/" + Utilities().files("RandomUtilities")
-                with open(output + Utilities().currenttime() + '.txt', 'w') as outfile:
-                    outfile.writelines(to_write)
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
+            output = Utilities().savelocation("Random Utilities") + "/" + Utilities().files("RandomUtilities")
+            with open(output + Utilities().currenttime() + '.txt', 'w') as outfile:
+                outfile.writelines(to_write)
             Utilities().pleasewait()
             randomutilities()
 
@@ -1286,9 +1210,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")            
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1307,9 +1231,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1327,9 +1251,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1347,9 +1271,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1367,9 +1291,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1391,9 +1315,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1419,9 +1343,9 @@ def password_filterer():
                                 pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1439,9 +1363,9 @@ def password_filterer():
                             to_write.append(lines)
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '[Fortnite].txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1459,9 +1383,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '[Minecraft].txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
@@ -1479,9 +1403,9 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '[Origin].txt', 'w') as output:
                 output.writelines(to_write)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             password_filterer()
 
