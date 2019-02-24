@@ -1,29 +1,21 @@
-import platform
+import shutil
 import subprocess
 import json
 import os
 from colorama import Fore, Style, init
 from tqdm import tqdm
-import shutil
 import random
 from itertools import takewhile, repeat
-import re
 from tkinter import Tk, filedialog
-import ctypes
-import sys
 import datetime
 import time
+import ctypes
+import sys
 
 class Utilities:
     def __init__(self):
         init()
         self.width = shutil.get_terminal_size().columns
-
-    def install_modules(self, module):
-        if platform.system() == "Windows":
-            return subprocess.call(f"pip install {module}")
-        else:
-            return subprocess.call(f"pip3 install {module}")
 
     def savelocation(self, mode):
         with open("config.json") as json_file:
@@ -109,10 +101,7 @@ class Utilities:
         return root.filename
     
     def settitle(self):
-        if platform.system() == "Windows":
-            return ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a")
-        elif platform.system() == "Linux":
-            return sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07")
+        return (ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a") if os.name == "nt" else sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07"))
 
     def createfiles(self):
         if not os.path.exists("Keepin' It Clean"):
@@ -158,10 +147,7 @@ class Utilities:
             os.makedirs(os.getcwd() + "/Keepin' It Clean/Password Filterer")
 
     def clear(self):
-        if platform.system() == "Windows":
-            return os.system("cls")
-        else:
-            return os.system("clear")
+        return os.system('cls' if os.name == "nt" else 'clear')
     
     def currenttime(self):
         return datetime.datetime.now().strftime("%b %d %Y %H-%M-%S")
@@ -171,3 +157,4 @@ class Utilities:
             print(Fore.YELLOW + "[*] Returning to menu in {} seconds".format(i).center(self.width), end="\r")
             time.sleep(1)
 
+    
