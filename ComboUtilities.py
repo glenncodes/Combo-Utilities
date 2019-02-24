@@ -1,33 +1,39 @@
-from collections import defaultdict
-from tkinter import Tk, filedialog
+import ctypes
+import datetime
 import fileinput
-import json
+import hashlib
 import os
+import platform
 import random
 import re
 import shutil
 import string
 import subprocess
+import sys
 import time
-
-def install_module(module):
-    return (os.system("pip install {}".format(module)) if os.name == "nt" else os.system("pip3 install {}".format(module)))
-
+from collections import defaultdict
+from tkinter import filedialog, Tk
+import json
+from Utilities import Utilities
 
 try:
-    from colorama import Style, Fore, init
-    init()
+    import colorama
+    from colorama import Style, Fore
+    colorama.init()
 except ModuleNotFoundError:
-    install_module("colorama")
+    print("Colorama not found, Installing..")
+    Utilities().install_modules("colorama")
     try:
-        from colorama import Style, Fore, init
-        init()
+        import colorama
+        from colorama import Style, Fore
+        colorama.init()
     except Exception:
         exit("Unable to install colorama, exiting.")
 try:
     import requests
 except ModuleNotFoundError:
-    install_module("requests")
+    print("Requests not found, Installing..")
+    Utilities().install_modules("requests")
     try:
         import requests
     except Exception:
@@ -35,7 +41,8 @@ except ModuleNotFoundError:
 try:
     from pypresence import Presence
 except ModuleNotFoundError:
-    install_module("pypresence")
+    print("PyPresence not found, Installing..")
+    Utilities().install_modules("pypresence")
     try:
         from pypresence import Presence
     except Exception:
@@ -43,13 +50,12 @@ except ModuleNotFoundError:
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
-    install_module("tqdm")
+    print("Tqdm not found, Installing..")
+    Utilities().install_modules("tqdm")
     try:
         from tqdm import tqdm
     except Exception:
         exit("Unable to install tqdm, exiting.")
-
-from Utilities import Utilities
 
 RPC = Presence("446884598165536788")
 to_write = []
@@ -59,8 +65,9 @@ regex = re.compile(r':\s*\S')
 regex2 = re.compile(r'\s*\S:')
 
 if not os.path.isfile("config.json"):
+    # Create the configuration file as it doesn't exist yet
     config = {"DiscordRichPresence": None,"FileNameType": None, "RandomMenuColor": None, "SaveLocation": None, "ProgressBar": None}
-    
+    # Add content to the file
     drpyn = input("Would you like to enable discord rich presence by default? [True/False] ")
     docfiles = input("\nWould you like to use custom or default file names by default? [Custom/Default] ")
     rmc = input("\nWould you like the program to randomly select the colors of 'Combo Utilities' on start up? [True/False] ")
@@ -97,6 +104,7 @@ MainMenu = (Utilities().randomcolor() + """
 
 def menu():
     to_write.clear()
+    colorama.init()
     Utilities().clear()
     print(MainMenu)
     print(Fore.YELLOW + "[1] " + Fore.LIGHTWHITE_EX + " | Combo Cleaner")
