@@ -1,28 +1,25 @@
-import ctypes
-import datetime
-import fileinput
-import hashlib
 import os
-import platform
-import random
+from itertools import takewhile, repeat
 import re
 import shutil
+import json
+import time
+from tkinter import Tk, filedialog
+import fileinput
+import random
+from collections import defaultdict
 import string
 import subprocess
-import sys
-import time
-from collections import defaultdict
-from tkinter import filedialog, Tk
-import json
-from Utilities import Utilities
+
+def install_module(module):
+        return os.system(f"pip install {module}" if os.name == "nt" else f"pip3 install {module}")
 
 try:
     import colorama
     from colorama import Style, Fore
     colorama.init()
 except ModuleNotFoundError:
-    print("Colorama not found, Installing..")
-    Utilities().install_modules("colorama")
+    install_module("colorama")
     try:
         import colorama
         from colorama import Style, Fore
@@ -32,8 +29,7 @@ except ModuleNotFoundError:
 try:
     import requests
 except ModuleNotFoundError:
-    print("Requests not found, Installing..")
-    Utilities().install_modules("requests")
+    install_module("requests")
     try:
         import requests
     except Exception:
@@ -41,8 +37,7 @@ except ModuleNotFoundError:
 try:
     from pypresence import Presence
 except ModuleNotFoundError:
-    print("PyPresence not found, Installing..")
-    Utilities().install_modules("pypresence")
+    install_module("pypresence")
     try:
         from pypresence import Presence
     except Exception:
@@ -50,12 +45,13 @@ except ModuleNotFoundError:
 try:
     from tqdm import tqdm
 except ModuleNotFoundError:
-    print("Tqdm not found, Installing..")
-    Utilities().install_modules("tqdm")
+    install_module("tqdm")
     try:
         from tqdm import tqdm
     except Exception:
         exit("Unable to install tqdm, exiting.")
+
+from Utilities import Utilities
 
 RPC = Presence("446884598165536788")
 to_write = []
