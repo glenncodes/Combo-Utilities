@@ -16,6 +16,7 @@ class Utilities:
     def __init__(self):
         init()
         self.width = shutil.get_terminal_size().columns
+        self.file_names = None
 
     def savelocation(self, mode):
         with open("config.json") as json_file:
@@ -31,27 +32,29 @@ class Utilities:
             data = json.load(f)
 
         if data["FileNameType"] == "Default":
-            umode = dict(ComboCleaner="Combo Cleaner ",
-                        ComboCombiner="Combo Combiner ",
-                        ComboParser="Combo Parser ",
-                        ComboSorter="Combo Sorter ",
-                        ComboSplitter="Combo Splitter ",
-                        DomainSorter="Domain Sorter ",
-                        DuplicateRemover="Duplicate Remover ",
-                        EmailToUsername="Email To Username ",
-                        EmptylinesRemover="Empty Line Remover ",
-                        linesCounter="Line Counter ",
-                        Randomizelines="Randomize Lines ",
-                        ComboSplitter2Email="Email-Usernames ",
-                        ComboSplitter2Password="Passwords ",
-                        ComboSplitter3Email="Emails ",
-                        ComboSplitter3Username="Usernames ",
-                        ComboSplitter3Password="Passwords ",
-                        PasswordFilterer="Password Filterer ",
-                        RandomUtilities="Random Utilities ",
-                        ComboParser1="Combo Parser[Usernames] ",
-                        ComboParser2="Combo Parser[Passwords] ")
-            return umode.get(mode)
+            umode = {
+                "ComboCleaner": "Combo Cleaner",
+                "ComboCombiner": "Combo Combiner",
+                "ComboParser": "Combo Parser",
+                "ComboSorter": "Combo Sorter",
+                "ComboSplitter": "Combo Splitter",
+                "DomainSorter": "Domain Sorter",
+                "DuplicateRemover": "Duplicate Remover",
+                "EmailToUsername": "Email To Username",
+                "EmptylinesRemover": "Empty Line Remover",
+                "linesCounter": "Line Counter",
+                "Randomizelines": "Randomize Lines",
+                "ComboSplitter2Email": "Email-Usernames",
+                "ComboSplitter2Password": "Passwords",
+                "ComboSplitter3Email": "Emails",
+                "ComboSplitter3Username": "Usernames",
+                "ComboSplitter3Password": "Passwords",
+                "PasswordFilterer": "Password Filterer",
+                "RandomUtilities": "Random Utilities",
+                "ComboParser1": "Combo Parser[Usernames]",
+                "ComboParser2": "Combo Parser[Passwords]"
+            }
+            return umode[mode] + " "
 
         elif data["FileNameType"] == "Custom":
             if mode in ("DomainSorter", "Domain Sorter"):
@@ -59,7 +62,7 @@ class Utilities:
             else:
                 print(Fore.YELLOW + "[*] Adding '.txt' isn't needed.".center(self.width) + Style.RESET_ALL)
                 umode = input(Fore.YELLOW + "Input the file name you'd like to use: ".center(self.width).split(": ")[0] + ": ")
-                return umode
+                return umode + " "
 
         else:
             exit('Invalid config file option | File Name Type | Line 2')
@@ -104,47 +107,19 @@ class Utilities:
             return (ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a") if os.name == "nt" else sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07"))
 
     def createfiles(self):
+        self.file_names = {
+            "Combo Cleaner", "Combo Combiner", "Combo Parser", 
+            "Combo Sorter", "Combo Splitter", "Domain Sorter", 
+            "Duplicate Remover", "Email To Username", "Empty Line Remover", 
+            "Line Counter", "Randomize Lines", "Random Utilities", 
+            "Password Filterer"
+            }
+        
         if not os.path.exists("Keepin' It Clean"):
             os.makedirs(os.getcwd() + "/Keepin' It Clean")
-
-        if not os.path.exists("Keepin' It Clean/Combo Cleaner"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Cleaner")
-
-        if not os.path.exists("Keepin' It Clean/Combo Combiner"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Combiner")
-
-        if not os.path.exists("Keepin' It Clean/Combo Parser"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Parser")
-
-        if not os.path.exists("Keepin' It Clean/Combo Sorter"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Sorter")
-
-        if not os.path.exists("Keepin' It Clean/Combo Splitter"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Combo Splitter")
-
-        if not os.path.exists("Keepin' It Clean/Domain Sorter"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Domain Sorter")
-
-        if not os.path.exists("Keepin' It Clean/Duplicate Remover"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Duplicate Remover")
-
-        if not os.path.exists("Keepin' It Clean/Email To Username"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Email To Username")
-
-        if not os.path.exists("Keepin' It Clean/Empty Line Remover"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Empty Line Remover")
-
-        if not os.path.exists("Keepin' It Clean/Line Counter"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Line Counter")
-
-        if not os.path.exists("Keepin' It Clean/Randomize Lines"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Randomize Lines")
-
-        if not os.path.exists("Keepin' It Clean/Random Utilities"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Random Utilities")
-
-        if not os.path.exists("Keepin' It Clean/Password Filterer"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean/Password Filterer")
+        for file in self.file_names:
+            if not os.path.exists("Keepin' It Clean/" + file):
+                os.makedirs(os.getcwd() + "/Keepin' It Clean/" + file)
 
     def clear(self):
         return os.system("cls" if os.name == "nt" else "clear")
@@ -153,7 +128,7 @@ class Utilities:
         return datetime.datetime.now().strftime("%b %d %Y %H-%M-%S")
     
     def pleasewait(self):
-        for i in range(0,3)[::-1]:
-            print(Fore.YELLOW + "[*] Returning to menu in {} seconds".format(i).center(self.width), end="\r")
+        for _ in range(0,3)[::-1]:
+            print(Fore.YELLOW + f"[*] Returning to menu in {_} seconds".center(self.width), end="\r")
             time.sleep(1)
 

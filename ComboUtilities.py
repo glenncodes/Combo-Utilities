@@ -61,14 +61,17 @@ regex = re.compile(r':\s*\S')
 regex2 = re.compile(r'\s*\S:')
 
 if not os.path.isfile("config.json"):
+    
     # Create the configuration file as it doesn't exist yet
     config = {"DiscordRichPresence": None,"FileNameType": None, "RandomMenuColor": None, "SaveLocation": None, "ProgressBar": None}
+    
     # Add content to the file
     drpyn = input("Would you like to enable discord rich presence by default? [True/False] ")
     docfiles = input("\nWould you like to use custom or default file names by default? [Custom/Default] ")
     rmc = input("\nWould you like the program to randomly select the colors of 'Combo Utilities' on start up? [True/False] ")
     dsl = input("\nWould you like to save the output to a different location? [Full file path to save to/Default] ")
     pbar = input("\nWould you like to use a progress bar? [True/False] ")
+    
     config["DiscordRichPresence"] = drpyn
     config["FileNameType"] = docfiles
     config["RandomMenuColor"] = rmc
@@ -98,6 +101,7 @@ MainMenu = (Utilities().randomcolor() + """
                                                                                                   By Kid#0001""")
 
 
+
 def menu():
     to_write.clear()
     colorama.init()
@@ -118,36 +122,28 @@ def menu():
     print(Fore.YELLOW + "[13]" + Fore.LIGHTWHITE_EX + " | Password Filterer")
     print(Fore.YELLOW + "[14]" + Fore.LIGHTWHITE_EX + " | Random Utilities" + Style.RESET_ALL)
     try:
-        select = input('\n' + Fore.YELLOW + 'Select one: ' + Fore.LIGHTWHITE_EX)
-        if select == "1":
-            combo_cleaner()
-        if select == "2":
-            combo_combiner()
-        if select == "3":
-            combo_parser()
-        if select == "4":
-            combo_sorter()
-        if select == "5":
-            combo_splitter()
-        if select == "6":
-            domain_sorter()
-        if select == "7":
-            duplicate_remover()
-        if select == "8":
-            email_to_user()
-        if select == "9":
-            empty_lines_remover()
-        if select == "10":
-            lines_counter()
-        if select == "11":
-            randomize_lines()
-        if select == "12":
-            hash_identifier()
-        if select == "13":
-            password_filterer()
-        if select == "14":
-            randomutilities()
-        if select is not int or select > str(int(14)):
+        selected = input('\n' + Fore.YELLOW + 'Select one: ' + Fore.LIGHTWHITE_EX)
+        
+        options = {
+            "1": "combo_cleaner()",
+            "2": "combo_combiner()",
+            "3": "combo_parser()",
+            "4": "combo_sorter()",
+            "5": "combo_splitter()",
+            "6": "domain_sorter()",
+            "7": "duplicate_remover()",
+            "8": "email_to_user()",
+            "9": "empty_lines_remover()",
+            "10": "lines_counter()",
+            "11": "randomize_lines()",
+            "12": "hash_identifier()",
+            "13": "password_filterer()",
+            "14": "randomutilities()"
+        }
+
+        if selected in options:
+            eval(options[selected])
+        if selected is not int:
             menu()
     except Exception as e:
         print(e)
@@ -158,7 +154,7 @@ def menu():
 def combo_cleaner():
     to_write.clear()
     Utilities().clear()
-    RPC.update(state="Combo Cleaner", details="Version 0.1a", large_image="large", start=int(ct))
+    #RPC.update(state="Combo Cleaner", details="Version 0.1a", large_image="large", start=int(ct))
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Replace all ;'s with :'s")
     print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing '{' or '}'")
     print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Remove all lines not containing ':' or ';'")
@@ -174,7 +170,7 @@ def combo_cleaner():
 
         if select == "1":
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
-                RPC.update(state="Editing file: {}".format(os.path.split(file.name)[-1]), details="Combo Cleaner | Option 1", large_image="large", start=int(ct))
+                #RPC.update(state="Editing file: {}".format(os.path.split(file.name)[-1]), details="Combo Cleaner | Option 1", large_image="large", start=int(ct))
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
@@ -196,7 +192,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "2":
-            RPC.update(state="Combo Cleaner | Option 2", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 2", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -218,7 +214,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "3":
-            RPC.update(state="Combo Cleaner | Option 3", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 3", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -240,7 +236,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "4":
-            RPC.update(state="Combo Cleaner | Option 4", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 4", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -261,7 +257,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "5":
-            RPC.update(state="Combo Cleaner | Option 5", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 5", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -282,7 +278,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "6":
-            RPC.update(state="Combo Cleaner | Option 6", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 6", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -311,7 +307,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "7":
-            RPC.update(state="Combo Cleaner | Option 7", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 7", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -334,7 +330,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "8":
-            RPC.update(state="Combo Cleaner | Option 8", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 8", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -362,7 +358,7 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "9":
-            RPC.update(state="Combo Cleaner | Option 9", details="Version 0.1a", large_image="large", start=int(ct))
+            #RPC.update(state="Combo Cleaner | Option 9", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 pick = input(Fore.YELLOW + "[?] Would you like to remove lines longer or shorter than x? | [longer/shorter]: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX).lower()
                 total_lines = Utilities().rawbigcount(file.name)
@@ -397,7 +393,7 @@ def combo_cleaner():
     except TypeError as e:
         print(e)
         Utilities().pleasewait()
-        MainMenu()
+        menu()
 
 
 def combo_combiner():
@@ -871,7 +867,7 @@ def domain_sorter():
 
         if select == "3":
             d = defaultdict(list)
-            with open(Utilities().openfile(), 'r') as file:
+            with open(Utilities().openfile(), 'r', encoding="iso-8859-1") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
@@ -1421,10 +1417,10 @@ if __name__ == '__main__':
             with open("config.json") as f:
                 data = json.load(f)
             if data["DiscordRichPresence"] == "True":
-                RPC.connect()
+                #RPC.connect()
                 current_time = time.time()
                 ct = str(current_time).split(".")[0]
-                RPC.update(state="In the main menu", details="Version 0.1a", large_image="large", start=int(ct))
+                #RPC.update(state="In the main menu", details="Version 0.1a", large_image="large", start=int(ct))
             else:
                 pass
         except Exception as e:
