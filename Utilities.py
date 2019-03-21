@@ -107,6 +107,8 @@ class Utilities:
             return (ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a") if os.name == "nt" else sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07"))
 
     def createfiles(self):
+        self.base_file = "Keepin' It Clean/"
+        self.location = os.getcwd()
         self.file_names = {
             "Combo Cleaner", "Combo Combiner", "Combo Parser", 
             "Combo Sorter", "Combo Splitter", "Domain Sorter", 
@@ -115,11 +117,11 @@ class Utilities:
             "Password Filterer"
             }
         
-        if not os.path.exists("Keepin' It Clean"):
-            os.makedirs(os.getcwd() + "/Keepin' It Clean")
-        for file in self.file_names:
-            if not os.path.exists("Keepin' It Clean/" + file):
-                os.makedirs(os.getcwd() + "/Keepin' It Clean/" + file)
+        if not os.path.exists(self.location + "/" + self.base_file):
+            os.makedirs(self.location + "/" + self.base_file)
+        for folder_name in self.file_names:
+            if not os.path.exists(self.location + "/" + self.base_file + folder_name):
+                os.makedirs(self.location + "/" + self.base_file + folder_name)
 
     def clear(self):
         return os.system("cls" if os.name == "nt" else "clear")
