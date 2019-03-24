@@ -1,18 +1,18 @@
 import os
-from itertools import takewhile, repeat
-import re
+import time
+import requests
 import shutil
 import json
-import time
-from tkinter import Tk, filedialog
-import fileinput
 import random
-from collections import defaultdict
 import string
-import subprocess
-import requests
+import fileinput
+import re
+from subprocess import call
+from itertools import takewhile, repeat
+from tkinter import Tk, filedialog
+from collections import defaultdict
 from tqdm import tqdm
-from colorama import Fore, Style, init
+from colorama import Fore, Style
 from Utilities import Utilities
 
 to_write = []
@@ -22,15 +22,15 @@ regex = re.compile(r':\s*\S')
 regex2 = re.compile(r'\s*\S:')
 
 if not os.path.isfile(os.getcwd() + "/config.json"):
-    
+
     # Create the configuration file as it doesn't exist yet
     config = {
-        "FileNameType": None, 
-        "RandomMenuColor": None, 
-        "SaveLocation": None, 
+        "FileNameType": None,
+        "RandomMenuColor": None,
+        "SaveLocation": None,
         "ProgressBar": None
         }
-    
+
     # Add content to the file
     file_name_type = input("\nWould you like to use custom or default file names by default? [Custom/Default] ")
     random_menu_color = input("\nWould you like the program to randomly select the colors of 'Combo Utilities' on start up? [True/False] ")
@@ -55,20 +55,19 @@ def lines_checker(text):
     else:
         return False
 
+
 MainMenu = (Utilities().randomcolor() + """
  ██████╗ ██████╗ ███╗   ███╗██████╗  ██████╗     ██╗   ██╗████████╗██╗██╗     ██╗████████╗██╗███████╗███████╗
 ██╔════╝██╔═══██╗████╗ ████║██╔══██╗██╔═══██╗    ██║   ██║╚══██╔══╝██║██║     ██║╚══██╔══╝██║██╔════╝██╔════╝
 ██║     ██║   ██║██╔████╔██║██████╔╝██║   ██║    ██║   ██║   ██║   ██║██║     ██║   ██║   ██║█████╗  ███████╗
 ██║     ██║   ██║██║╚██╔╝██║██╔══██╗██║   ██║    ██║   ██║   ██║   ██║██║     ██║   ██║   ██║██╔══╝  ╚════██║
 ╚██████╗╚██████╔╝██║ ╚═╝ ██║██████╔╝╚██████╔╝    ╚██████╔╝   ██║   ██║███████╗██║   ██║   ██║███████╗███████║
- ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝  ╚═════╝      ╚═════╝    ╚═╝   ╚═╝╚══════╝╚═╝   ╚═╝   ╚═╝╚══════╝╚══════╝    
+ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝  ╚═════╝      ╚═════╝    ╚═╝   ╚═╝╚══════╝╚═╝   ╚═╝   ╚═╝╚══════╝╚══════╝
                                                                                                   By Kid#0001""")
-
 
 
 def menu():
     to_write.clear()
-    init()
     Utilities().clear()
     print(MainMenu)
     print(Fore.YELLOW + "[1] " + Fore.LIGHTWHITE_EX + " | Combo Cleaner")
@@ -87,7 +86,7 @@ def menu():
     print(Fore.YELLOW + "[14]" + Fore.LIGHTWHITE_EX + " | Random Utilities" + Style.RESET_ALL)
     try:
         selected = input('\n' + Fore.YELLOW + 'Select one: ' + Fore.LIGHTWHITE_EX)
-        
+
         options = {
             "1": "combo_cleaner()",
             "2": "combo_combiner()",
@@ -109,7 +108,7 @@ def menu():
             eval(options[selected])
         if selected is not int:
             menu()
-    
+
     except Exception as e:
         print(e)
         Utilities().pleasewait()
@@ -168,7 +167,7 @@ def combo_cleaner():
                         to_write.append(lines)
             if len(to_write) >= 1:
                 print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
-                with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() +  '.txt', 'w', errors="ignore") as outfile:
+                with open(Utilities().savelocation("Combo Cleaner") + "/" + Utilities().files("ComboCleaner") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                     outfile.writelines(to_write)
             else:
                 print(Fore.YELLOW + "No invalid lines were found.".center(width))
@@ -361,17 +360,17 @@ def combo_combiner():
         select = input(Fore.YELLOW + "[?] Select the module you'd like to use: " + Fore.LIGHTWHITE_EX)
 
         if select == "1":
-            print(Fore.YELLOW + "[+] You can select multiple combos!".center(width))
+            print(Fore.YELLOW + "[*] You can select multiple combos!".center(width))
             root = Tk()
             root.withdraw()
             root.filename = filedialog.askopenfilenames(title="Select combo list(s)", filetypes=(("Text files", "*.txt"), ("all files", "*.*")))
             start = time.time()
             lines = fileinput.input(root.filename, openhook=fileinput.hook_encoded("ISO-8859-1", errors="ignore"))
-            
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
+
             output = Utilities().savelocation("Combo Combiner") + "/" + Utilities().files("ComboCombiner")
             with open(output + Utilities().currenttime() + ".txt", "a", errors="ignore") as outfile:
                 outfile.writelines(lines)
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
 
             root.destroy()
             Utilities().pleasewait()
@@ -390,10 +389,10 @@ def combo_combiner():
                     start = time.time()
                     for x, y in zip(user, passw):
                         to_write.append(x.strip() + ":" + y.strip() + '\n')
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             output = Utilities().savelocation("Combo Combiner") + '/' + Utilities().files("ComboCombiner")
             with open(output + Utilities().currenttime() + '.txt', "a", errors="ignore") as outfile:
                 outfile.writelines(to_write)
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_combiner()
 
@@ -517,7 +516,7 @@ def combo_sorter():
                 print(Fore.YELLOW + "File contains {:,} lines.".rstrip().format(total_lines).center(width) + Style.RESET_ALL)
 
                 lines = sorted(file.readlines(), key=len, reverse=True)
-            
+
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation("Combo Sorter") + "/" + Utilities().files("ComboSorter") + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(lines)
@@ -669,7 +668,7 @@ def combo_splitter():
             with open(output + Utilities().currenttime() + ".txt", "a", errors="ignore") as file1:
                 file1.writelines(to_write0)
             with open(output2 + Utilities().currenttime() + ".txt", "a", errors="ignore") as file2:
-                file2.writelines(to_write1) 
+                file2.writelines(to_write1)
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_splitter()
@@ -865,7 +864,7 @@ def domain_sorter():
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             domain_sorter()
-        
+
         if select == "5":
             d = defaultdict(list)
             domains = [x for x in input("Select domains [Seperated with a space]: ").split(" ")]
@@ -877,9 +876,9 @@ def domain_sorter():
                 try:
                     for lines in Utilities().progressbar(file, total_lines):
                         for line in domains:
-                            reg = re.search(f"@({line}):", lines)
+                            reg = re.search(f"@{line}:", lines)
                             if reg:
-                                d[reg.group(1)].append(lines)
+                                d[line].append(lines)
                             else:
                                 pass
                     for key in d.keys():
@@ -889,11 +888,10 @@ def domain_sorter():
                 except Exception as e:
                     print(e)
                     pass
-            print(Fore.YELLOW + "[+] lines Sorted: %s".center(width) % total_lines)
             print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             domain_sorter()
-        
+
     except Exception as e:
         print(e)
         Utilities().pleasewait()
@@ -995,11 +993,11 @@ def lines_counter():
 
                 word = input(Fore.YELLOW + "Input the word to search for: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX)
                 for lines in file:
-                    if not word in lines:
+                    if word not in lines:
                         pass
                     else:
                         to_write.append(lines)
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")            
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             output = Utilities().savelocation("Line Counter") + "/" + Utilities().files("linesCounter") + "[{}]".format(word)
             with open(output + Utilities().currenttime() + '.txt', 'w', errors="ignore") as outfile:
                 outfile.writelines(to_write)
@@ -1115,7 +1113,7 @@ def randomutilities():
 
 def hash_identifier():
     print("\nCredit to psypanda: \nhttps://github.com/psypanda/hashID\n")
-    subprocess.call("python HashID.py -m -j " + input("Input your hash: "), shell=False)
+    call("python HashID.py -m -j " + input("Input your hash: "), shell=False)
     Utilities().pleasewait()
     menu()
 
@@ -1153,7 +1151,7 @@ def password_filterer():
                             pass
                     except IndexError as e:
                         continue
-            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")            
+            print(Fore.YELLOW + "[+] Time took: {}".center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             with open(Utilities().savelocation('Password Filterer') + '/' + Utilities().files("PasswordFilterer") + Utilities().currenttime() + '.txt', 'w') as output:
                 output.writelines(to_write)
             Utilities().pleasewait()
@@ -1266,7 +1264,7 @@ def password_filterer():
         if select == "7":
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 lonorsho = input(Fore.YELLOW + "[?] Would you like to remove passwords longer or shorter than x?: [Shorter/Longer] ".center(width).split("r] ")[0] + "r] ").lower()
-                amount = int(input(Fore.YELLOW + "[?] How long should the password minimum be?: ".center(width).split("?: ")[0] + "?: "+ Fore.LIGHTWHITE_EX))
+                amount = int(input(Fore.YELLOW + "[?] How long should the password minimum be?: ".center(width).split("?: ")[0] + "?: " + Fore.LIGHTWHITE_EX))
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
                 for lines in Utilities().progressbar(file, total_lines):
@@ -1358,14 +1356,9 @@ def password_filterer():
 
 
 if __name__ == '__main__':
-    to_write.clear()
     try:
         shutil.rmtree("./__pycache__", ignore_errors=True)
-        Utilities().clear()
-        Utilities().settitle()
-        Utilities().createfiles()
+        Utilities().startup_setup()
         menu()
-    
     except Exception as e:
-        print(e)
-        pass
+        exit(e)

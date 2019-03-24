@@ -1,37 +1,26 @@
-import os
-import shutil
-import json
-from colorama import Fore, Style, init
-import time
-from tkinter import Tk, filedialog
-import time
-import random
-from tqdm import tqdm
-import sys
-import ctypes
-import datetime
+import os, sys
+import time, datetime
+import shutil, json, ctypes, random
 from itertools import takewhile, repeat
-
+from colorama import Fore, Style, init
+from tkinter import Tk, filedialog
+from tqdm import tqdm
 class Utilities:
     def __init__(self):
         init()
         self.width = shutil.get_terminal_size().columns
         self.file_names = None
+        with open("config.json", "r") as json_file:
+            self.data = json.load(json_file)
 
     def savelocation(self, mode):
-        with open("config.json") as json_file:
-            data = json.load(json_file)
-
-        if data["SaveLocation"] == "Default":
+        if self.data["SaveLocation"] == "Default":
             return os.getcwd() + f"/Keepin' It Clean/{mode}"
         else:
-            return str(data["SaveLocation"])
+            return str(self.data["SaveLocation"])
     
     def files(self, mode):
-        with open("config.json") as f:
-            data = json.load(f)
-
-        if data["FileNameType"] == "Default":
+        if self.data["FileNameType"] == "Default":
             umode = {
                 "ComboCleaner": "Combo Cleaner",
                 "ComboCombiner": "Combo Combiner",
@@ -56,7 +45,7 @@ class Utilities:
             }
             return umode[mode] + " "
 
-        elif data["FileNameType"] == "Custom":
+        elif self.data["FileNameType"] == "Custom":
             if mode in ("DomainSorter", "Domain Sorter"):
                 return "Domain Sorter "
             else:
@@ -68,26 +57,19 @@ class Utilities:
             exit('Invalid config file option | File Name Type | Line 2')
         
     def progressbar(self, file, amount):
-        with open("config.json") as f:
-            data = json.load(f)
-
-        if data["ProgressBar"] in ("True", "true", "1", "yes"):
+        if self.data["ProgressBar"] in ("True", "true", "1", "yes"):
             return tqdm(file, desc="Cleaning", total=amount, smoothing=1, ascii=True, unit=" lines", position=0, leave=False)
-        elif data["ProgressBar"] in ("False", "false", "0", "no"):
+        elif self.data["ProgressBar"] in ("False", "false", "0", "no"):
             return tqdm(file, disable=True)
         else:
             exit('Invalid config file option | Progress bar | Line 5')
     
     def randomcolor(self):
-        with open("config.json") as f:
-            data = json.load(f)
-
-        if data["RandomMenuColor"] == "True":
+        if self.data["RandomMenuColor"] == "True":
             colors = (Fore.RED, Fore.YELLOW, Fore.MAGENTA, Fore.CYAN, Fore.LIGHTRED_EX, Fore.LIGHTMAGENTA_EX, Fore.LIGHTBLUE_EX)
             return random.choice(colors)
-        elif data["RandomMenuColor"] == "False":
+        elif self.data["RandomMenuColor"] == "False":
             return Fore.YELLOW
-
         else:
             exit('Invalid config file option | Random Menu Color | Line 3')
 
@@ -103,26 +85,6 @@ class Utilities:
 
         return root.filename
     
-    def settitle(self):
-            return (ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a") if os.name == "nt" else sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07"))
-
-    def createfiles(self):
-        self.base_file = "Keepin' It Clean/"
-        self.location = os.getcwd()
-        self.file_names = {
-            "Combo Cleaner", "Combo Combiner", "Combo Parser", 
-            "Combo Sorter", "Combo Splitter", "Domain Sorter", 
-            "Duplicate Remover", "Email To Username", "Empty Line Remover", 
-            "Line Counter", "Randomize Lines", "Random Utilities", 
-            "Password Filterer"
-            }
-        
-        if not os.path.exists(self.location + "/" + self.base_file):
-            os.makedirs(self.location + "/" + self.base_file)
-        for folder_name in self.file_names:
-            if not os.path.exists(self.location + "/" + self.base_file + folder_name):
-                os.makedirs(self.location + "/" + self.base_file + folder_name)
-
     def clear(self):
         return os.system("cls" if os.name == "nt" else "clear")
     
@@ -133,4 +95,30 @@ class Utilities:
         for _ in range(0,3)[::-1]:
             print(Fore.YELLOW + f"[*] Returning to menu in {_} seconds".center(self.width), end="\r")
             time.sleep(1)
+
+    def startup_setup(self):
+        self.clear()
+        
+        if os.name == "nt":
+            ctypes.windll.kernel32.SetConsoleTitleW("Combo Utilities | Version 0.1a")
+        else:
+             sys.stdout.write("\x1b]2;Combo Utilities | Version 0.1a\x07")
+        
+        self.base_file = "Keepin' It Clean/"
+        self.location = os.getcwd() + "/"
+        self.file_names = {
+            "Combo Cleaner", "Combo Combiner", "Combo Parser", 
+            "Combo Sorter", "Combo Splitter", "Domain Sorter", 
+            "Duplicate Remover", "Email To Username", "Empty Line Remover", 
+            "Line Counter", "Randomize Lines", "Random Utilities", 
+            "Password Filterer"
+            }
+        
+        if not os.path.exists(self.location + self.base_file):
+            os.makedirs(self.location + self.base_file)
+        for folder_name in self.file_names:
+            if not os.path.exists(self.location + self.base_file + folder_name):
+                os.makedirs(self.location + self.base_file + folder_name)
+
+
 
