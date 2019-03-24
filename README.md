@@ -2,6 +2,17 @@
 Advanced combo management tool
 ## Issues
 If you have an issue, open an issue request on GitHub, Do not contact me on discord under any circumstance.
+
+## Installation
+To install simply, open a command prompt or terminal and type the following:
+```
+pip install -r requirements.txt
+```
+Once it's done installing the requirements, You can go ahead and launch it like you would launch any other python program:
+```
+python ComboUtilities.py
+```
+
 ## Configuration
 Configure Combo Utilities to your needs
 ### General
