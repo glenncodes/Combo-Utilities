@@ -10,73 +10,37 @@ import random
 from collections import defaultdict
 import string
 import subprocess
-
-def install_module(module):
-        return os.system(f"pip install {module}" if os.name == "nt" else f"pip3 install {module}")
-
-try:
-    import colorama
-    from colorama import Style, Fore
-    colorama.init()
-except ModuleNotFoundError:
-    install_module("colorama")
-    try:
-        import colorama
-        from colorama import Style, Fore
-        colorama.init()
-    except Exception:
-        exit("Unable to install colorama, exiting.")
-try:
-    import requests
-except ModuleNotFoundError:
-    install_module("requests")
-    try:
-        import requests
-    except Exception:
-        exit("Unable to install requests, exiting.")
-try:
-    from pypresence import Presence
-except ModuleNotFoundError:
-    install_module("pypresence")
-    try:
-        from pypresence import Presence
-    except Exception:
-        exit("Unable to install pypresence, exiting.")
-try:
-    from tqdm import tqdm
-except ModuleNotFoundError:
-    install_module("tqdm")
-    try:
-        from tqdm import tqdm
-    except Exception:
-        exit("Unable to install tqdm, exiting.")
-
+import requests
+from tqdm import tqdm
+from colorama import Fore, Style, init
 from Utilities import Utilities
 
-RPC = Presence("446884598165536788")
 to_write = []
 width = shutil.get_terminal_size().columns
 PYTHONDONTWRITEBYTECODE = 1
 regex = re.compile(r':\s*\S')
 regex2 = re.compile(r'\s*\S:')
 
-if not os.path.isfile("config.json"):
+if not os.path.isfile(os.getcwd() + "/config.json"):
     
     # Create the configuration file as it doesn't exist yet
-    config = {"DiscordRichPresence": None,"FileNameType": None, "RandomMenuColor": None, "SaveLocation": None, "ProgressBar": None}
+    config = {
+        "FileNameType": None, 
+        "RandomMenuColor": None, 
+        "SaveLocation": None, 
+        "ProgressBar": None
+        }
     
     # Add content to the file
-    drpyn = input("Would you like to enable discord rich presence by default? [True/False] ")
-    docfiles = input("\nWould you like to use custom or default file names by default? [Custom/Default] ")
-    rmc = input("\nWould you like the program to randomly select the colors of 'Combo Utilities' on start up? [True/False] ")
-    dsl = input("\nWould you like to save the output to a different location? [Full file path to save to/Default] ")
-    pbar = input("\nWould you like to use a progress bar? [True/False] ")
+    file_name_type = input("\nWould you like to use custom or default file names by default? [Custom/Default] ")
+    random_menu_color = input("\nWould you like the program to randomly select the colors of 'Combo Utilities' on start up? [True/False] ")
+    file_save_location = input("\nWould you like to save the output to a different location? [Full file path to save to/Default] ")
+    progress_bar = input("\nWould you like to use a progress bar? [True/False] ")
     
-    config["DiscordRichPresence"] = drpyn
-    config["FileNameType"] = docfiles
-    config["RandomMenuColor"] = rmc
-    config["SaveLocation"] = dsl
-    config["ProgressBar"] = pbar
+    config["FileNameType"] = file_name_type
+    config["RandomMenuColor"] = random_menu_color
+    config["SaveLocation"] = file_save_location
+    config["ProgressBar"] = progress_bar
 
     with open("config.json", "w") as file:
         json.dump(config, file, indent=2)
@@ -104,7 +68,7 @@ MainMenu = (Utilities().randomcolor() + """
 
 def menu():
     to_write.clear()
-    colorama.init()
+    init()
     Utilities().clear()
     print(MainMenu)
     print(Fore.YELLOW + "[1] " + Fore.LIGHTWHITE_EX + " | Combo Cleaner")
@@ -145,6 +109,7 @@ def menu():
             eval(options[selected])
         if selected is not int:
             menu()
+    
     except Exception as e:
         print(e)
         Utilities().pleasewait()
@@ -154,7 +119,6 @@ def menu():
 def combo_cleaner():
     to_write.clear()
     Utilities().clear()
-    #RPC.update(state="Combo Cleaner", details="Version 0.1a", large_image="large", start=int(ct))
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Replace all ;'s with :'s")
     print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing '{' or '}'")
     print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Remove all lines not containing ':' or ';'")
@@ -170,7 +134,6 @@ def combo_cleaner():
 
         if select == "1":
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
-                #RPC.update(state="Editing file: {}".format(os.path.split(file.name)[-1]), details="Combo Cleaner | Option 1", large_image="large", start=int(ct))
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
                 print(Fore.YELLOW + f"Loaded {os.path.basename(file.name)}".rstrip().center(width))
@@ -192,7 +155,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "2":
-            #RPC.update(state="Combo Cleaner | Option 2", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -214,7 +176,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "3":
-            #RPC.update(state="Combo Cleaner | Option 3", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -236,7 +197,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "4":
-            #RPC.update(state="Combo Cleaner | Option 4", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -257,7 +217,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "5":
-            #RPC.update(state="Combo Cleaner | Option 5", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -278,7 +237,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "6":
-            #RPC.update(state="Combo Cleaner | Option 6", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -307,7 +265,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "7":
-            #RPC.update(state="Combo Cleaner | Option 7", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -330,7 +287,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "8":
-            #RPC.update(state="Combo Cleaner | Option 8", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 total_lines = Utilities().rawbigcount(file.name)
                 start = time.time()
@@ -358,7 +314,6 @@ def combo_cleaner():
             combo_cleaner()
 
         if select == "9":
-            #RPC.update(state="Combo Cleaner | Option 9", details="Version 0.1a", large_image="large", start=int(ct))
             with open(Utilities().openfile(), 'r', errors="ignore") as file:
                 pick = input(Fore.YELLOW + "[?] Would you like to remove lines longer or shorter than x? | [longer/shorter]: ".center(width).split(':')[0] + ': ' + Fore.LIGHTWHITE_EX).lower()
                 total_lines = Utilities().rawbigcount(file.name)
@@ -733,13 +688,11 @@ def combo_splitter():
                 output = Utilities().savelocation("Combo Splitter") + "/" + Utilities().files("ComboSplitter3Email")
                 output2 = Utilities().savelocation("Combo Splitter") + "/" + Utilities().files("ComboSplitter3Username")
                 output3 = Utilities().savelocation("Combo Splitter") + "/" + Utilities().files("ComboSplitter3Password")
-                count = 0
                 try:
                     for lines in file:
                         emails.append(lines.split(":")[0] + '\n')
                         usernames.append(lines.split(":")[0].split('@')[0] + '\n')
                         passwords.append(lines.split(":")[1])
-                        count += 1
                 except IndexError:
                     pass
             with open(output + Utilities().currenttime() + '.txt', 'a', errors="ignore") as outfile1:
@@ -748,7 +701,6 @@ def combo_splitter():
                 outfile2.writelines(usernames)
             with open(output3 + Utilities().currenttime() + ".txt", "a", errors="ignore") as outfile3:
                 outfile3.writelines(passwords)
-            print(Fore.YELLOW + "[+] Lines Split: %s".rstrip().center(width) % count)
             print(Fore.YELLOW + "[+] Time took: {}".rstrip().center(width - 7).format(time.time() - start).split('.')[0] + " seconds")
             Utilities().pleasewait()
             combo_splitter()
@@ -1096,7 +1048,7 @@ def randomutilities():
             print("[*] Generating over 25 keys will automatically get saved instead of getting printed.")
             amount = int(input(Fore.YELLOW + "[?] How many would you like to generate?: "))
             length = int(input(Fore.YELLOW + "[?] How long should the string be?: "))
-            if amount > 25:
+            if amount >= 25:
                 output = Utilities().savelocation("Random Utilities") + "/" + Utilities().files("RandomUtilities")
                 with open(output + Utilities().currenttime() + '[String].txt', 'w') as outfile:
                     start = time.time()
@@ -1170,7 +1122,6 @@ def hash_identifier():
 
 def password_filterer():
     to_write.clear()
-    count = 0
     Utilities().clear()
     print(Fore.YELLOW + "[1]" + Fore.LIGHTWHITE_EX + " | Remove all passwords that don't contain at least 1 uppercase letter.")
     print(Fore.YELLOW + "[2]" + Fore.LIGHTWHITE_EX + " | Remove all passwords that don't contain at least 1 number.")
@@ -1218,7 +1169,6 @@ def password_filterer():
                         reg = re.search(r".*[0-9]+.*", line)
                         if reg:
                             to_write.append(lines)
-                            count += 1
                         else:
                             pass
                     except IndexError as e:
@@ -1413,20 +1363,9 @@ if __name__ == '__main__':
         shutil.rmtree("./__pycache__", ignore_errors=True)
         Utilities().clear()
         Utilities().settitle()
-        try:
-            with open("config.json") as f:
-                data = json.load(f)
-            if data["DiscordRichPresence"] == "True":
-                #RPC.connect()
-                current_time = time.time()
-                ct = str(current_time).split(".")[0]
-                #RPC.update(state="In the main menu", details="Version 0.1a", large_image="large", start=int(ct))
-            else:
-                pass
-        except Exception as e:
-            print(e)
         Utilities().createfiles()
         menu()
+    
     except Exception as e:
         print(e)
         pass

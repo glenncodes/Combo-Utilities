@@ -71,9 +71,9 @@ class Utilities:
         with open("config.json") as f:
             data = json.load(f)
 
-        if data["ProgressBar"] == "True":
+        if data["ProgressBar"] in ("True", "true", "1", "yes"):
             return tqdm(file, desc="Cleaning", total=amount, smoothing=1, ascii=True, unit=" lines", position=0, leave=False)
-        elif data["ProgressBar"] == "False":
+        elif data["ProgressBar"] in ("False", "false", "0", "no"):
             return tqdm(file, disable=True)
         else:
             exit('Invalid config file option | Progress bar | Line 5')

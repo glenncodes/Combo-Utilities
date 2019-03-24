@@ -5,13 +5,6 @@ If you have an issue, open an issue request on GitHub, Do not contact me on disc
 ## Configuration
 Configure Combo Utilities to your needs
 ### General
-  * Discord Rich Presence:
-     * Allowed Options:
-        * Yes | This will enable the discord rich presence integration by default.
-        * No  | This will disable the discord rich presence integration by default.
-     * Recommended Option:
-        * Disabled.
-
   * File Name Type:
      * Allowed Options:
         * Default | This defaults the program to use predefined file names instead of you having to input your own each time.
