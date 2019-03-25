@@ -29,7 +29,7 @@ class Utilities:
             return str(self.data["SaveLocation"])
     
     def files(self, mode):
-        if self.data["FileNameType"] == "Default":
+        if self.data["FileNameType"].lower() == "default":
             umode = {
                 "ComboCleaner": "Combo Cleaner",
                 "ComboCombiner": "Combo Combiner",
@@ -54,7 +54,7 @@ class Utilities:
             }
             return umode[mode] + " "
 
-        elif self.data["FileNameType"] == "Custom":
+        elif self.data["FileNameType"].lower() == "custom":
             if mode in ("DomainSorter", "Domain Sorter"):
                 return "Domain Sorter "
             else:
