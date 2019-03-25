@@ -12,10 +12,25 @@ Once it's done installing the requirements, You can go ahead and launch it like 
 ```
 python ComboUtilities.py
 ```
-
 ## Configuration
 Configure Combo Utilities to your needs
 ### General
+
+   
+   * For (File name type & Progress bar) allowed options inclde:
+     * True:
+       * true
+       * yes
+       * 1
+       * on
+     * False:
+       * false
+       * no
+       * 0
+       * off
+     
+     * Capitalization doesn't matter.
+
   * File Name Type:
      * Allowed Options:
         * Default | This defaults the program to use predefined file names instead of you having to input your own each time.
