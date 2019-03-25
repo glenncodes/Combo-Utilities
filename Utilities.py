@@ -1,20 +1,29 @@
-import os, sys
-import time, datetime
-import shutil, json, ctypes, random
+import os
+import sys
+import time
+import datetime
+import shutil
+import json
+import ctypes
+import random
 from itertools import takewhile, repeat
 from colorama import Fore, Style, init
 from tkinter import Tk, filedialog
 from tqdm import tqdm
+
+
 class Utilities:
     def __init__(self):
         init()
         self.width = shutil.get_terminal_size().columns
         self.file_names = None
+        self.yes_values = {"true", "yes", "1", "on"}
+        self.no_values = {"false", "no", "0", "off"}
         with open("config.json", "r") as json_file:
             self.data = json.load(json_file)
 
     def savelocation(self, mode):
-        if self.data["SaveLocation"] == "Default":
+        if self.data["SaveLocation"].lower() == "default":
             return os.getcwd() + f"/Keepin' It Clean/{mode}"
         else:
             return str(self.data["SaveLocation"])
@@ -54,24 +63,24 @@ class Utilities:
                 return umode + " "
 
         else:
-            exit('Invalid config file option | File Name Type | Line 2')
+            exit('Invalid option entered in config file. (File Name Type; Line 2)')
         
-    def progressbar(self, file, amount):
-        if self.data["ProgressBar"] in ("True", "true", "1", "yes"):
+    def progressbar(self, file, amount): 
+        if self.data["ProgressBar"].lower() in self.yes_values:
             return tqdm(file, desc="Cleaning", total=amount, smoothing=1, ascii=True, unit=" lines", position=0, leave=False)
-        elif self.data["ProgressBar"] in ("False", "false", "0", "no"):
+        elif self.data["ProgressBar"].lower() in self.no_values:
             return tqdm(file, disable=True)
         else:
-            exit('Invalid config file option | Progress bar | Line 5')
+            exit('Invalid option entered in the config file. (Progress bar; Line 5)')
     
     def randomcolor(self):
-        if self.data["RandomMenuColor"] == "True":
+        if self.data["RandomMenuColor"].lower() in self.yes_values:
             colors = (Fore.RED, Fore.YELLOW, Fore.MAGENTA, Fore.CYAN, Fore.LIGHTRED_EX, Fore.LIGHTMAGENTA_EX, Fore.LIGHTBLUE_EX)
             return random.choice(colors)
-        elif self.data["RandomMenuColor"] == "False":
+        elif self.data["RandomMenuColor"].lower() in self.no_values:
             return Fore.YELLOW
         else:
-            exit('Invalid config file option | Random Menu Color | Line 3')
+            exit('Invalid option entered in the config file. (Random Menu Color; Line 3)')
 
     def rawbigcount(self, filename):
         f = open(filename, 'rb')
@@ -92,7 +101,7 @@ class Utilities:
         return datetime.datetime.now().strftime("%b %d %Y %H-%M-%S")
     
     def pleasewait(self):
-        for _ in range(0,3)[::-1]:
+        for _ in range(1,4)[::-1]:
             print(Fore.YELLOW + f"[*] Returning to menu in {_} seconds".center(self.width), end="\r")
             time.sleep(1)
 

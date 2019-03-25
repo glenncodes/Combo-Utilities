@@ -123,7 +123,7 @@ def combo_cleaner():
     print(Fore.YELLOW + "[3]" + Fore.LIGHTWHITE_EX + " | Remove all lines not containing ':' or ';'")
     print(Fore.YELLOW + "[4]" + Fore.LIGHTWHITE_EX + " | Remove all lines not containing '@'")
     print(Fore.YELLOW + "[5]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing '@'")
-    print(Fore.YELLOW + "[6]" + Fore.LIGHTWHITE_EX + " | Remove all of the above [Except option 5]" + Fore.LIGHTRED_EX + " [Most recommended!]" + Style.RESET_ALL)
+    print(Fore.YELLOW + "[6]" + Fore.LIGHTWHITE_EX + " | Remove all of the above (Except option 5)")
     print(Fore.YELLOW + "[7]" + Fore.LIGHTWHITE_EX + " | Remove all lines containing a certain string")
     print(Fore.YELLOW + "[8]" + Fore.LIGHTWHITE_EX + " | Invalid combo remover [example@example.com: ] or [ :example]")
     print(Fore.YELLOW + "[9]" + Fore.LIGHTWHITE_EX + " | Remove all lines longer than or shorter than x")
