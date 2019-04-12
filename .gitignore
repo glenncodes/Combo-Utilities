@@ -2,3 +2,5 @@ Keepin' It Clean/*
 todo
 config.json
 .vscode/*
+start.bat
+*.pyc

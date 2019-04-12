@@ -1,0 +1,10 @@
+{
+    "Custom 1": {
+        "domains": ["gmail.com", "yahoo.com", "aol.com", "outlook.com", "icloud.com", "yandex.com", "live.com", "mail.com"],
+        "type": "domain"
+    },
+    "Custom 2": {
+        "domains": [".com", ".de", ".ru", ".jp", ".co.uk", ".gov", ".net", ".org", ".edu", ".fr", ".ca", ".pl", ".es", ".it"],
+        "type": "extension"
+    }
+}

@@ -1,0 +1,92 @@
+{
+  "FileNameType": "Default",
+  "RandomMenuColor": "True",
+  "SaveLocation": "Default",
+  "ProgressBar": "True",
+  
+  "CustomColor": {
+    "Enabled": "True",
+    "Color": "YELLOW"
+  },
+
+  "Modules": {
+    "ComboCleaner": {
+      "Enabled": "True",
+      "Number": "1",
+      "Message": "{yellow}[{number}]{lightwhite}  | Combo Cleaner",
+      "Startup": "ComboCleaner().startup()"
+    },
+    "ComboCombiner": {
+      "Enabled": "True",
+      "Number": "2",
+      "Message": "{yellow}[{number}]{lightwhite}  | Combo Combiner",
+      "Startup": "ComboCombiner().startup()"
+    },
+    "ComboParser": {
+      "Enabled": "True",
+      "Number": "3",
+      "Message": "{yellow}[{number}]{lightwhite}  | Combo Parser",
+      "Startup": "ComboParser().startup()"
+    },
+    "ComboSorter": {
+      "Enabled": "True",
+      "Number": "4",
+      "Message": "{yellow}[{number}]{lightwhite}  | Combo Sorter",
+      "Startup": "ComboSorter().startup()"
+    },
+    "ComboSplitter": {
+      "Enabled": "True",
+      "Number": "5",
+      "Message": "{yellow}[{number}]{lightwhite}  | Combo Splitter",
+      "Startup": "ComboSplitter().startup()"
+    },
+    "DomainSorter": {
+      "Enabled": "True",
+      "Number": "6",
+      "Message": "{yellow}[{number}]{lightwhite}  | Domain Sorter",
+      "Startup": "DomainSorter().startup()"
+    },
+    "DuplicateRemover": {
+      "Enabled": "True",
+      "Number": "7",
+      "Message": "{yellow}[{number}]{lightwhite}  | Duplicate Remover",
+      "Startup": "DuplicateRemover().startup()"
+    },
+    "EmailToUsername": {
+      "Enabled": "True",
+      "Number": "8",
+      "Message": "{yellow}[{number}]{lightwhite}  | Email To Username",
+      "Startup": "EmailToUsername().startup()"
+    },
+    "EmptyLineRemover": {
+      "Enabled": "True",
+      "Number": "9",
+      "Message": "{yellow}[{number}]{lightwhite}  | Empty Line Remover",
+      "Startup": "EmptyLineRemover().startup()"
+    },
+    "LineCounter": {
+      "Enabled": "True",
+      "Number": "10",
+      "Message": "{yellow}[{number}]{lightwhite} | Line Counter",
+      "Startup": "LineCounter().startup()"
+    },
+    "PasswordFilterer": {
+      "Enabled": "True",
+      "Number": "11",
+      "Message": "{yellow}[{number}]{lightwhite} | Password Filterer",
+      "Startup": "PasswordFilterer().startup()"
+    },
+    "RandomizeLines": {
+      "Enabled": "True",
+      "Number": "12",
+      "Message": "{yellow}[{number}]{lightwhite} | Randomize Lines",
+      "Startup": "RandomizeLines().startup()"
+    },
+    "RandomUtilities": {
+      "Enabled": "True",
+      "Number": "13",
+      "Message": "{yellow}[{number}]{lightwhite} | Random Utilities",
+      "Startup": "RandomUtilities().startup()"
+    }
+  }
+}
